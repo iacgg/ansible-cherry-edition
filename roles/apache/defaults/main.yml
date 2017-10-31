@@ -1,0 +1,3 @@
+---
+web_apache_enabled: true
+web_logrotate_rotate: 7
