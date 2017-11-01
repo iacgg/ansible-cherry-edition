@@ -127,8 +127,9 @@
 - name: Ensures logfiles for apache has correct permissions
   lineinfile:
     dest: "/etc/logrotate.d/apache2"
-    regexp: '^\s+create\s+\d+$'
-    line: "	create 644 root www-data"
+    regexp: '^.+create'
+    line: '        create 644 root www-data'
+    state: present
   tags:
     - apache2
     - apache2-config
