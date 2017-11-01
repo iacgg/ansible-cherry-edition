@@ -1,0 +1,24 @@
+---
+- name: Ensures hostname is ansible_inventory"
+  hostname:
+    name: "{{ inventory_hostname }}"
+  tags:
+    - hostname
+
+- sysctl:
+    name: "kernel.hostname"
+    value: "{{ inventory_hostname }}"
+    state: present
+  tags:
+    - hostname
+
+- name: Ensures hosts file is added
+  template:
+    src: "hosts.j2"
+    dest: "/etc/hosts"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  tags:
+    - hosts
+    - hosts-config
