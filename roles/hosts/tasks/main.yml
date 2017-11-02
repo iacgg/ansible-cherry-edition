@@ -1,13 +1,13 @@
 ---
 - name: Ensures hostname is ansible_inventory"
   hostname:
-    name: "{{ inventory_hostname }}"
+    name: "{{ host_fqdn }}"
   tags:
     - hostname
 
 - sysctl:
     name: "kernel.hostname"
-    value: "{{ inventory_hostname }}"
+    value: "{{ host_fqdn }}"
     state: present
   tags:
     - hostname

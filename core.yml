@@ -1,5 +1,7 @@
 ---
 - hosts: all
   roles:
+    - role: resolv
     - role: hosts
+    - role: syslog/syslog-client
 

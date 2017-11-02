@@ -1,0 +1,34 @@
+---
+- name: Ensures syslog server is installed
+  package:
+    name: "rsyslog"
+    state: present
+  tags:
+    - syslog
+    - syslog-server
+
+- name: Ensure rsyslog.conf is up to date
+  template:
+    src: "rsyslog.conf.j2"
+    dest: "/etc/rsyslog.conf"
+  notify:
+    - restart rsyslog
+  tags:
+    - syslog
+    - syslog-server
+    - syslog-config
+    - syslog-server-config
+
+- name: Ensures ustom log config is placed
+  template:
+    src: "{{ item }}"
+    dest: "/etc/rsyslog.d/{{ item }}"
+  with_items:
+    - "15-all-other.conf"
+  notify:
+    - restart rsyslog
+  tags:
+    - syslog
+    - syslog-server
+    - syslog-config
+    - syslog-server-config
