@@ -1,0 +1,67 @@
+---
+- name: Ensures bind is present
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items: 
+    - "bind9"
+    - "bind9utils"
+    - "bind9-doc"
+  notify:
+    - start bind9 
+  tags:
+    - bind
+
+- name: Ensures zones directory is present
+  file:
+    path: "/etc/bind/zones"
+    state: directory
+    owner: "bind"
+  when: dns_is_master
+  tags:
+    - bind
+
+- name: Enesures slave-zone folder is present
+  file:
+    path: "/etc/bind/slave-zone"
+    state: directory
+    owner: "bind"
+  when: "dns_is_slave is defined and dns_is_slave"
+  tags:
+    - bind
+
+- name: Ensures bind configuration files named.local is present
+  template:
+    src: "named.conf.local.j2"
+    dest: "/etc/bind/named.conf.local"
+    owner: "bind"
+  notify:
+    - restart bind9 
+  tags:
+    - bind
+    - bind-config
+
+- name: Ensures bind confiuration files named.options is present
+  template:
+    src: "named.conf.options.j2"
+    dest: "/etc/bind/named.conf.options"
+    owner: "bind"
+  notify:
+    - restart bind9 
+  when: dns_is_master
+  tags:
+    - bind
+    - bind-config
+
+- name: Ensures zone file(s) is present
+  template:
+    src: "{{ item }}"
+    dest: "/etc/bind/zones/{{ item }}"
+    owner: "bind"
+  with_items: "{{ dns_zone_files }}"
+  notify:
+    - reload bind9
+  when: dns_is_master
+  tags:
+    - bind
+    - bind-config

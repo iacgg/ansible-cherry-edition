@@ -1,3 +1,8 @@
 [web]
-dev01.local
+dev01 primary_ip=192.168.50.20
 
+[dns]
+dev01 primary_ip=192.168.50.20
+
+[syslog]
+syslog01 primary_ip=192.168.50.30

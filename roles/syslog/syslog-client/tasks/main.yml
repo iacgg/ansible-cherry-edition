@@ -1,0 +1,22 @@
+---
+- name: Ensures syslog server is installed
+  package:
+    name: "rsyslog"
+    state: present
+  tags:
+    - syslog
+    - syslog-client
+
+- name: Custom everything log
+  template:
+    src: "{{ item }}"
+    dest: "/etc/rsyslog.d/{{ item }}"
+  with_items:
+    - "15-send-logs.conf"
+  notify:
+    - restart rsyslog
+  tags:
+    - syslog
+    - syslog-client
+    - syslog-config
+    - syslog-client-config
