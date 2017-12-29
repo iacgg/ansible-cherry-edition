@@ -1,5 +1,5 @@
 ---
-- name: install apache2 packages
+- name: Ensures apache2 is installed
   apt:
     name: "{{ item }}"
     state: present
@@ -8,7 +8,7 @@
   tags:
     - apache2
 
-- name: config available
+- name: Ensueres config and enabled is synced
   synchronize:
     src: "{{ item }}/"
     dest: "/etc/apache2/{{ item }}"
@@ -23,7 +23,7 @@
     - apache2
     - apache2-config
 
-- name: Ensure /var/www/vhosts exists
+- name: Ensures /var/www/vhosts exists
   file:
     state: "directory"
     path: "/var/www/vhosts"
@@ -32,7 +32,7 @@
   tags:
     - apache2
 
-- name: Ensure apache modules are loaded
+- name: Ensures apache modules are loaded
   apache2_module:
     name: "{{ item }}"
   with_items:
@@ -49,7 +49,7 @@
     - apache2
     - apache2-config
 
-- name: Ensure /var/www/html exists
+- name: Ensures /var/www/html exists
   file:
     path: "/var/www/html"
     state: directory
@@ -58,7 +58,7 @@
   tags:
     - apache2
 
-- name: Ensure /var/www/virtual exists
+- name: Ensures /var/www/virtual exists
   file:
     path: "/var/www/virtual"
     state: directory
@@ -67,7 +67,7 @@
   tags:
     - apache2
 
-- name: Ensure /var/www/vhosts exists
+- name: Ensures /var/www/vhosts exists
   file:
     path: "/var/www/vhosts"
     state: directory
@@ -76,7 +76,7 @@
   tags:
     - apache2
 
-- name: Ensure hc.html is synced
+- name: Ensures hc.html is synced
   template:
     src: "hc.html"
     dest: /var/www/html/hc.html
