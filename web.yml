@@ -2,4 +2,4 @@
 - hosts: web
   roles:
     - role: web/apache2
-
+      when: "web_managed|default(false)"
