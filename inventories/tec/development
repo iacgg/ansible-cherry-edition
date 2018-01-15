@@ -1,0 +1,9 @@
+[dns:children]
+isp-dns
+local-dns
+
+[isp-dns]
+dns1 primary_ip=192.168.1.198
+
+[local-dns]
+dns2 primary_ip=192.168.1.109

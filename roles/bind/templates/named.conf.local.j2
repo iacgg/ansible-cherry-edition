@@ -1,0 +1,22 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+{% for zone in dns_zone_files %}
+zone "{{ zone[:-3] }}" {
+        type {% if dns_is_master %}master{% elif dns_is_slave is defined and dns_is_slave %}slave{% endif %};
+{% if dns_is_master %}
+        file "/etc/bind/zones/{{ zone }}";
+{% endif %}
+#        also-notify { <master or other>; };
+#        allow-query { any; };
+{% if dns_is_slave is defined and dns_is_slave %}
+        masters { {{ dns_master }}; };
+        file "/etc/bind/slave-zone/{{ zone }}";
+{% endif %}
+};
+{% endfor %}
