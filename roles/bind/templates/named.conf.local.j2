@@ -6,17 +6,15 @@
 // organization
 //include "/etc/bind/zones.rfc1918";
 
-{% for zone in dns_zone_files %}
-zone "{{ zone[:-3] }}" {
-        type {% if dns_is_master %}master{% elif dns_is_slave is defined and dns_is_slave %}slave{% endif %};
-{% if dns_is_master %}
-        file "/etc/bind/zones/{{ zone }}";
+{% for name, zone in dns_zone_files.items() %}
+zone "{{ zone["zonename"] }}" {
+        type {{ zone ["type"] }};
+{% if zone["type"] == "master" %}
+        file "/etc/bind/zones/{{ zone["dbname"] }}";
 {% endif %}
-#        also-notify { <master or other>; };
-#        allow-query { any; };
-{% if dns_is_slave is defined and dns_is_slave %}
-        masters { {{ dns_master }}; };
-        file "/etc/bind/slave-zone/{{ zone }}";
+{% if zone["type"] == "slave" %}
+        masters { {{ zone["master"] }}; };
+        file "/etc/bind/slave-zone/{{ zone["dbname"] }}";
 {% endif %}
 };
 {% endfor %}

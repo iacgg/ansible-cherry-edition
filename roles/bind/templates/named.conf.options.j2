@@ -1,43 +1,29 @@
+acl trustednetworks {
+	127.0.0.1;
+	192.168.1.0/24;
+};
+
 options {
         directory "/var/cache/bind";
 
-        // If there is a firewall between you and nameservers you want
-        // to talk to, you may need to fix the firewall to allow multiple
-        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
-
-        // If your ISP provided one or more IP addresses for stable
-        // nameservers, you probably want to use them as forwarders.
-        // Uncomment the following block, and insert the addresses replacing
-        // the all-0's placeholder.
-
-        // forwarders {
-        //      0.0.0.0;
-        // };
-
-        //========================================================================
-        // If BIND logs error messages about the root key being expired,
-        // you will need to update your keys.  See https://www.isc.org/bind-keys
-        //========================================================================
-
-        dnssec-validation auto;
-        auth-nxdomain no;    # conform to RFC1035
-
         listen-on-v6 { any; };
 
-	recursion yes;
+	//dnssec-enable yes;
+        dnssec-validation no;
 
-	## Used for only allow some
-        allow-recursion { {% if dns_allow_recursion_ip is defined %}{{ dns_allow_recursion_ip }}{% endif %} 127.0.0.1/32; };
-	
+        auth-nxdomain no;    # conform to RFC1035
+
+{% if dns_forwarders is defined %} 
 	forwarders {
 		{% for forwarders in dns_forwarders %}
 		{{ forwarders }};
 		{% endfor %}
 	};
+{% endif %}
 
-//	allow-transfer {
-//		A.B.C.D/PREFIX;
-//		A.B.C.D;
-//	};
+	allow-transfer { trustednetworks; };
+	allow-query { trustednetworks; };
+	allow-recursion { trustednetworks; };
 
+	max-transfer-time-in 15;
 };

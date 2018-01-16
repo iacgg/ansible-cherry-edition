@@ -1,4 +1,13 @@
 ---
-dns_allow_recursion_ip: "10.0.0.0/8;"
+#dns_allow_recursion_ip: "10.0.0.0/8;"
+
 dns_zone_files:
-  - "stockholm.db"
+  e211.db:
+    dbname: "e211.db"
+    type: "master"
+    zonename: "e211"
+#    master: "x.x.x.x"
+#  taizhong.e211.db:
+#    dbname: "taizhong.e211.db"
+#    type: "master"
+#    zonename: "taizhong.e211"

@@ -1,7 +1,16 @@
 ---
-bind_hostname_zone_serial: 1
+#bind_hostname_zone_serial: 1
 
-dns_allow_recursion_ip: "10.0.0.0/8;"
+#dns_allow_recursion_ip: "10.0.0.0/8;"
+#dns_zone_files:
+#  - "loc.db"
+#  - "taizhong-internal.db"
+
 dns_zone_files:
-  - "loc.db"
-  - "stockholm-internal.db"
+  taizhong-internal.db:
+    dbname: "taizhong.e211.db"
+    type: "master"
+    zonename: "taizhong.e211"
+
+dns_forwarders:
+  - "192.168.1.198"
