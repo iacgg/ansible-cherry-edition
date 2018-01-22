@@ -11,3 +11,14 @@ dns_zone_files:
 #    dbname: "taizhong.e211.db"
 #    type: "master"
 #    zonename: "taizhong.e211"
+
+dns_forwarder_zones:
+  test zone:
+    domain: "test.henriksen"
+    forwarders:
+      - "1.1.1.1"
+      - "2.2.2.2"
+  taizhong dot ding:
+    domain: "taizhong.ding"
+    forwarders:
+      - "192.168.1.109"

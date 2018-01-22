@@ -18,3 +18,15 @@ zone "{{ zone["zonename"] }}" {
 {% endif %}
 };
 {% endfor %}
+
+
+{% if dns_forwarder_zones is defined %}
+{% for name, zone in dns_forwarder_zones.items() %}
+## Forward zone for {{ name }}
+zone "{{ zone ["domain"] }}" {
+	type forward;
+	forward first;
+	forwarders { {% for ip in zone["forwarders"] %}{{ ip }}; {% endfor %}};
+};
+{% endfor %}
+{% endif %}
