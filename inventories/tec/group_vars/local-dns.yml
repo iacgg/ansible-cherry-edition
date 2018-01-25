@@ -1,11 +1,4 @@
 ---
-#bind_hostname_zone_serial: 1
-
-#dns_allow_recursion_ip: "10.0.0.0/8;"
-#dns_zone_files:
-#  - "loc.db"
-#  - "taizhong-internal.db"
-
 dns_zone_files:
   taizhong-internal.db:
     dbname: "taizhong.e211.db"
@@ -22,3 +15,18 @@ dns_zone_files:
 
 dns_forwarders:
   - "192.168.1.198"
+
+dns_acl:
+  trusted networks:
+    name: "trustednetworks"
+    networks:
+      - "127.0.0.1"
+      - "192.168.1.0/24"
+
+dns_allow_transfer:
+  - "trustednetworks"
+dns_allow_query:
+  - "trustednetworks"
+dns_allow_recursion:
+  - "trustednetworks"
+

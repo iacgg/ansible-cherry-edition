@@ -64,7 +64,8 @@
   #with_items: "{{ dns_zone_files }}"
   notify:
     - reload bind9
-  when: dns_is_master
+  when: "dns_is_master and dns_is_master is defined"
   tags:
     - bind
     - bind-config
+
