@@ -25,7 +25,7 @@ zone "{{ zone["zonename"] }}" {
 ## Forward zone for {{ name }}
 zone "{{ zone ["domain"] }}" {
 	type forward;
-	forward first;
+	forward only;
 	forwarders { {% for ip in zone["forwarders"] %}{{ ip }}; {% endfor %}};
 };
 {% endfor %}
