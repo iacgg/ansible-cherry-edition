@@ -1,16 +1,9 @@
 ---
-#dns_allow_recursion_ip: "10.0.0.0/8;"
-
 dns_zone_files:
   e211.db:
     dbname: "e211.db"
     type: "master"
     zonename: "e211"
-#    master: "x.x.x.x"
-#  taizhong.e211.db:
-#    dbname: "taizhong.e211.db"
-#    type: "master"
-#    zonename: "taizhong.e211"
 
 dns_forwarder_zones:
   test zone:
@@ -22,3 +15,18 @@ dns_forwarder_zones:
     domain: "taizhong.ding"
     forwarders:
       - "192.168.1.109"
+
+dns_acl:
+  trusted networks:
+    name: "trustednetworks"
+    networks:
+      - "127.0.0.1"
+      - "192.168.1.0/24"
+
+dns_allow_transfer:
+  - "trustednetworks"
+dns_allow_query:
+  - "trustednetworks"
+dns_allow_recursion:
+  - "trustednetworks"
+
