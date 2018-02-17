@@ -2,6 +2,8 @@
 - hosts: all
   roles:
     - role: resolv
+      when: "resolv_managed|default(false)"
     - role: hosts
+      when: "hosts_managed|default(false)"
     - role: syslog/syslog-client
-
+      when: "syslog_managed|default(false)"

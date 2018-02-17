@@ -1,0 +1,36 @@
+---
+dns_is_master: true
+#dns_allow_recursion_ip: "10.0.0.0/8;"
+
+dns_zone_files:
+  prod/e211.db:
+    dbname: "e211.db"
+    type: "master"
+    zonename: "e211"
+
+dns_forwarder_zones:
+  test zone:
+    domain: "test.henriksen"
+    forwarders:
+      - "1.1.1.1"
+      - "2.2.2.2"
+  taizhong dot ding:
+    domain: "taizhong.ding"
+    forwarders:
+      - "200.3.1.5"
+  auckland dot dk:
+    domain: "auckland.dk"
+    forwarders:
+      - "200.5.5.5"
+  vancouver dot dk:
+    domain: "vancouver.dk"
+    forwarders:
+      - "200.7.0.3"
+  singapore dot net:
+    domain: "singapore.net"
+    forwarders:
+      - "200.4.1.1"
+  moscow dot com:
+    domain: "moscow.com"
+    forwarders:
+      - "200.2.1.6"

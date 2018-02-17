@@ -1,0 +1,20 @@
+$TTL 60
+$ORIGIN e211.
+@ IN SOA ns1.e211. root.e211. (
+        200 ; serial
+               30M ; refresh
+               15M ; retry
+                1W ; expiry
+                1M ; nx ttl
+)
+
+			IN		NS	ns1
+
+localhost		IN		A	127.0.0.1
+ns1			IN		A	190.200.155.29
+
+taizhong.e211.		IN		NS	ns1.taizhong.e211.
+ns1.taizhong.e211.			A	200.3.1.5
+					
+stockholm.e211.		IN		NS	ns1.stockholm.e211.
+ns1.stockholm.e211.			A	200.1.255.6

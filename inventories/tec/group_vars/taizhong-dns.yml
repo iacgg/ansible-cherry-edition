@@ -1,0 +1,29 @@
+---
+dns_is_master: true
+#bind_hostname_zone_serial: 1
+
+#dns_allow_recursion_ip: "10.0.0.0/8;"
+#dns_zone_files:
+#  - "loc.db"
+#  - "taizhong-internal.db"
+
+dns_zone_files:
+  prod/taizhong-internal.db:
+    dbname: "taizhong.e211.db"
+    type: "master"
+    zonename: "taizhong.e211"
+  prod/taizhong-ding.db:
+    dbname: "taizhong.ding.db"
+    type: "master"
+    zonename: "taizhong.ding"
+  prod/taizhong-ding-reverse.db:
+    dbname: "taizhong.ding.reverse.db"
+    type: "master"
+    zonename: "1.3.200.in-addr.arpa"
+  prod/taizhong-local.db:
+    dbname: "taizhong.local.db"
+    type: "master"
+    zonename: "taizhong.loc"
+
+dns_forwarders:
+  - "190.200.155.29"

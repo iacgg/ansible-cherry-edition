@@ -1,0 +1,12 @@
+[dns:children]
+master-dns
+taizhong-dns
+
+[master-dns]
+fakeDKhostmaster primary_ip=192.168.200.130
+
+[taizhong-dns]
+NS1.taizhong.ding primary_ip=192.168.200.131
+
+[web:children]
+taizhong-dns

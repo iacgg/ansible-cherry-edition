@@ -1,0 +1,32 @@
+---
+dns_zone_files:
+  taizhong-internal.db:
+    dbname: "taizhong.e211.db"
+    type: "master"
+    zonename: "taizhong.e211"
+  taizhong-ding.db:
+    dbname: "taizhong.ding.db"
+    type: "master"
+    zonename: "taizhong.ding"
+  taizhong-ding-reverse.db:
+    dbname: "taizhong.ding.reverse.db"
+    type: "master"
+    zonename: "1.168.192.in-addr.arpa"
+
+dns_forwarders:
+  - "192.168.1.198"
+
+dns_acl:
+  trusted networks:
+    name: "trustednetworks"
+    networks:
+      - "127.0.0.1"
+      - "192.168.1.0/24"
+
+dns_allow_transfer:
+  - "trustednetworks"
+dns_allow_query:
+  - "trustednetworks"
+dns_allow_recursion:
+  - "trustednetworks"
+
