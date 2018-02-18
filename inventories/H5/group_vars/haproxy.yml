@@ -1,0 +1,18 @@
+---
+# Need to be moved to host
+#keepalived_priority: 100
+
+vrrp_groups:
+  vg1:
+      private:
+        vip: "192.168.3.49"
+        range: "192.168.3.49/22"
+        id: 101
+        iface: "eth0"
+        #scripts: "haproxy"
+
+
+vrrp_scripts:
+  haproxy:
+    scripts: "killall -0 haproxy"
+    interval: 2

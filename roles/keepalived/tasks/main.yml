@@ -1,0 +1,17 @@
+---
+- name: Ensures keepalived and depencies is installed
+  package:
+    name: "{{ item }}"
+  with_items:
+    - "keepalived"
+    - "psmisc"
+  tags:
+    - keepalived
+
+- name: Ensures keepalived config is updated
+  template:
+    src: "keepalived.conf.j2"
+    dest: "/etc/keepalived/keepalived.conf"
+  tags:
+    - keepalived
+    - keepalived-config

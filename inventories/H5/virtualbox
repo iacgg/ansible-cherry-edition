@@ -8,7 +8,7 @@ web02 ansible_host=192.168.3.61
 
 [graylog]
 graylog01 ansible_host=192.168.3.70
-graylog02 ansible_host=192.168.3.71
+#graylog02 ansible_host=192.168.3.71
 
 [mysql]
 mysql01 ansible_host=192.168.3.80

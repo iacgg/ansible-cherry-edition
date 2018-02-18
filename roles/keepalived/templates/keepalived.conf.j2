@@ -1,0 +1,44 @@
+{% if vrrp_scripts is defined %}
+{% for name, values in vrrp_scripts.iteritems() %}
+vrrp_script {{ name }} {
+  interval "{{ values.scripts }}"
+  interval {{ values.interval }}
+}
+{% endfor %}
+{% endif %}
+
+! mananged by ansible -- don't touch
+
+{% if vrrp_groups is defined %}
+
+{% for name, group in vrrp_groups.iteritems() %}
+vrrp_sync_group {{ name }} {
+  group {
+  {% for k, v in group.iteritems() %}
+    {{ k }}
+  {% endfor %}
+  }
+}
+
+{% for k, v in group.iteritems() -%}
+vrrp_instance {{ k }} {
+  virtual_router_id {{ v.id }}
+  advert_int 1
+  priority {{ keepalived_priority }}
+  state MASTER
+  interface {{ v.iface }}
+  virtual_ipaddress {
+    {{ v.range }} dev {{ v.iface }}
+  }
+{% if v.script is defined %}
+  track_script {
+    {{ v.script }}
+  }
+{% endif %}
+}
+
+{% endfor %}
+
+{% endfor %}
+
+{% endif %}
