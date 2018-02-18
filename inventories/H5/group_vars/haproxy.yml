@@ -1,7 +1,4 @@
 ---
-# Need to be moved to host
-#keepalived_priority: 100
-
 vrrp_groups:
   vg1:
       private:
@@ -16,3 +13,65 @@ vrrp_scripts:
   haproxy:
     scripts: "killall -0 haproxy"
     interval: 2
+
+haproxy_stats_ip: 127.0.0.1
+haproxy_log_format: haproxy_lua
+
+## If using custom LE backend
+#haproxy_letsencrypt_backend: 127.0.0.1:8088
+
+#haproxy_force_https_domains:
+#  - 101.dk
+
+#haproxy_redirect_path:
+#  sogndk:
+#    url: https
+#    aliases:
+#      - 101.dk
+#    paths:
+#      - /
+
+#haproxy_redirect:
+#  folkekirkensit:
+#    url: https://101.dk
+#    aliases:
+#      - 101.dk
+
+#haproxy_method_to_backend:
+#  - name: es
+#    domain: es.101.dk
+#    method:
+#      - GET
+#      - OPTIONS
+#      - HEAD
+#    backend: elasticsearch
+#    block_other: true
+
+## Haproxy backends and domians
+haproxy_default_backend: web_cluster
+
+#haproxy_resolvers:
+#  google:
+#    nameservers:
+#      public-0: 8.8.8.8:53
+#      public-1: 8.8.4.4:53
+
+haproxy_backends:
+#  elasticsearch:
+#    host:
+#      sogndk_es: es.101:80
+#    custom_check: "check inter 5000 resolvers google"
+#    domains:
+#      -
+  web_cluster:
+    host:
+      web01: 192.168.3.60:80
+      web02: 192.168.3.61:80
+    domains:
+      - www.101.dk
+      - 101.dk
+  graylog:
+    host:
+      fi_graylog: 192.168.3.70:80
+    domains:
+      - graylog.101.dk

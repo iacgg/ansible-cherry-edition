@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+{% for d in haproxy_force_https_domains %}
+{{ d }}
+{% endfor %}

@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+{% if item.value['domains'] is defined %}
+{% for d in item.value['domains'] %}
+{{ d }}
+{% endfor %}
+{% endif %}
+{% if item.value['aliases'] is defined %}
+{% for a in item.value['aliases'] %}
+{{ a }}
+{% endfor %}
+{% endif %}

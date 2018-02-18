@@ -3,4 +3,6 @@
   roles:
     - role: keepalived
       when: "keepalived_managed|default(true)"
+    - role: haproxy
+      when: "haproxy_managed|default(true)"
 

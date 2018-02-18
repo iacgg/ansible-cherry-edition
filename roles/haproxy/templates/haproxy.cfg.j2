@@ -1,0 +1,170 @@
+global
+    daemon
+    maxconn 100000
+    log /dev/log len 2048 local0
+    ulimit-n 205042
+    stats socket /etc/haproxy/haproxy.stats level admin
+    tune.ssl.maxrecord 1370 # lower record size to improve TTFB
+    tune.ssl.default-dh-param 2048 # # increase diffie hellman params
+    ssl-default-bind-options no-sslv3 no-tls-tickets
+
+
+defaults
+    mode http
+    log global
+    option splice-auto
+    option http-keep-alive
+    option http-server-close
+    option redispatch
+    option log-separate-errors
+    retries 3
+    timeout http-request    30s
+    timeout connect         30s
+    timeout http-keep-alive 1s
+    timeout check           30s
+    timeout client          60s
+    timeout server          60s
+    timeout queue           30s
+    balance roundrobin
+
+listen stats
+    bind {{ haproxy_stats_ip }}:1936
+    mode http
+    stats enable
+    stats hide-version
+    stats realm Haproxy\ Statistics
+    stats uri /
+
+frontend public-web
+## BINDS START ##
+    bind *:80 id 10
+    #bind *:443 id 20 ssl crt /etc/haproxy/default.pem crt /etc/haproxy/certs.d crt /etc/haproxy/letsencrypt.certs.d ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK no-sslv3 no-tls-tickets npn http/1.1
+## BINDS END ##
+   
+{% if haproxy_log_format is defined %}
+## LOG START ##
+{% if haproxy_log_format == "haproxy_lua" %}
+    log-format %ci:%cp\ [%Ts.%ms]\ %ft\ %b/%s\ %Tq/%Tw/%Tc/%Tr/%Tt\ %ST\ %CC\ %CS\ %tsc\ %ac/%fc/%bc/%sc/%rc\ %sq/%bq\ %ID\ "%hr"\ "%hs"\ %U\ %B\ %{+Q}r
+
+    capture request header Host len 64
+    capture request header Referer len 128
+    capture request header Content-Length len 10
+    capture request header User-Agent len 128
+    capture request header X-Forwarded-Proto len 8
+    capture request header X-Forwarded-For len 64
+    capture request header X-ReqId len 64
+    capture request header X-Backend-Hint len 32
+    capture request header X-UA-Device len 32
+    capture request header Authorization len 64
+    capture response header Age len 32
+    capture response header X-PCO-TTL len 12
+    capture response header Location len 128
+    capture response header X-No-Cache len 1
+    capture response header X-App-Name len 32
+    capture response header X-App-Release len 32
+    capture response header X-App-Metrics-mem len 64
+    capture response header X-App-Metrics-db len 64
+    capture response header X-App-Metrics-req len 64
+    capture response header X-App-Metrics-time len 64
+    capture response header X-App-Metrics-auth len 64
+    capture response header X-App-Node len 32
+    capture response header X-Grace len 10
+    capture response header X-App-Type len 20
+{% endif %}
+## LOG END ##
+{% endif %}
+
+    option forwardfor except 127.0.0.0/8
+    option http-server-close
+
+    http-request set-header X-Real-IP %[src]
+    http-response set-header X-ReqId %ID
+
+    tcp-request inspect-delay 5s
+ 
+{% if haproxy_letsencrypt_backend is defined %}
+    acl is_le path_beg /.well-known/
+{% endif %}
+
+{% if haproxy_method_to_backend is defined %}
+{% for redirect in haproxy_method_to_backend %}
+    acl {{ redirect['name'] }}_domain hdr_end(host) -i {{ redirect['domain'] }}
+    acl {{ redirect['name'] }}_method method {% for method in redirect['method'] %}{{ method }} {% endfor %}
+{% if redirect['block_other'] is defined %} 
+    http-request deny if !{{ redirect['name'] }}_method {{ redirect['name'] }}_domain
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if haproxy_redirect_path is defined %}
+{% for name, redirect in haproxy_redirect_path.items() %}
+    acl {{ name }}_path hdr{{ redirect['host_match']|default('_beg') }}(host) -i -f /etc/haproxy/redirects/path/{{ name }}-redirect.lst
+    acl {{ name }}_paths path{{ redirect['path_match']|default('') }} -i {% for path in redirect['paths'] %}{{ path }} {% endfor %} 
+    redirect {% if redirect['url'] == 'https' %}scheme{% else %}prefix{% endif %} {{ redirect['url'] }} code 301 if {{ name }}_path {{ name }}_paths {% if redirect['url'] == 'https' %}!{ ssl_fc }{% endif %}{% if haproxy_letsencrypt_backend is defined %} !is_le{% endif %} 
+
+{% endfor %}
+{% endif %}
+
+{% if haproxy_redirect is defined %}
+{% for name, redirect in haproxy_redirect.items() %}
+    acl {{ name }} hdr{{ redirect['host_match']|default('_beg') }}(host) -i -f /etc/haproxy/redirects/normal/{{ name }}-redirect.lst
+    redirect prefix {{ redirect['url'] }} code 301 if {{ name }} {% if haproxy_letsencrypt_backend is defined %}!is_le{% endif %} 
+
+{% endfor %}
+{% endif %}
+
+{% if haproxy_force_https_domains is defined %}
+    http-request set-header X-Forwarded-Proto https if { ssl_fc }
+    acl force_https hdr(Host) -m end -f /etc/haproxy/force-https.lst
+    redirect scheme https code 301 if force_https !{ ssl_fc } {% if haproxy_letsencrypt_backend is defined %}!is_le{% endif %}
+{% endif %}
+
+
+{% if haproxy_letsencrypt_backend is defined %}
+    use_backend b_letsencrypt if is_le
+{% endif %}
+
+{% if haproxy_method_to_backend is defined %}
+{% for redirect in haproxy_method_to_backend %}
+    use_backend b_{{ redirect['backend'] }} if {{ redirect['name'] }}_method {{ redirect['name'] }}_domain
+{% endfor %}
+{% endif %}
+
+{% for key,value in haproxy_backends.items() %}
+    acl {{ key }}_list hdr_beg(host) -i -f /etc/haproxy/{{ key }}.lst
+    use_backend b_{{ key }} if {{ key }}_list
+
+{% endfor %}
+
+{% if haproxy_default_backend is defined %}
+    default_backend b_{{ haproxy_default_backend }}
+{% endif %}
+
+{% if haproxy_resolvers is defined %}
+## RESOLVERS START ##
+{% for key,value in haproxy_resolvers.items()|sort %}
+resolvers {{ key }}
+{% for dns in value['nameservers'].items() %}
+    nameserver {{ dns[0] }} {{ dns[1] }}
+{% endfor %}
+    hold valid 10s
+{% endfor %}
+## RESOLVERS END ##
+{% endif %}
+
+## BACKENDS START ##
+{% for key,value in haproxy_backends.items()|sort %}
+backend b_{{ key }}
+    option httpchk GET /
+    mode http
+{% for hosts in value['host'].items() %}
+    server {{ hosts[0] }} {{ hosts[1] }} {% if value['custom_check'] is defined %}{{ value['custom_check'] }}{% else %}check{% endif %} 
+{% endfor %}
+
+{% endfor %}
+
+{% if haproxy_letsencrypt_backend is defined %}
+backend b_letsencrypt
+    server b_le {{ haproxy_letsencrypt_backend }}
+{% endif %}
+## BACKENDS END ##

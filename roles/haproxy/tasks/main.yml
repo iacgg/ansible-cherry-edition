@@ -1,0 +1,104 @@
+---
+- name: Ensure apt-transport-https is present
+  package: 
+    name: "apt-transport-https"
+    state: present
+
+- name: Ensures haproxy is installed
+  package:
+    name: "haproxy"
+    state: present
+  tags:
+    - haproxy
+
+- name: Ensures default pem exist
+  copy:
+    src: "default.pem"
+    dest: "/etc/haproxy/default.pem"
+  tags:
+    - haproxy
+    - haproxy-config
+
+- name: Ensures certs folders exist
+  file:
+    state: "directory"
+    path: "{{ item }}"
+  with_items:
+    - "/etc/haproxy/certs.d"
+    - "/etc/haproxy/letsencrypt.certs.d"
+  tags:
+    - haproxy
+
+- name: Ensures haproxy is configured
+  template:
+    src: "haproxy.cfg.j2"
+    dest: "/etc/haproxy/haproxy.cfg"
+  register: haproxy_config
+  tags:
+    - haproxy
+    - haproxy-config
+
+- name: Ensures redirect folders exist
+  file:
+    state: "directory"
+    path: "{{ item }}"
+  with_items:
+    - "/etc/haproxy/redirects"
+    - "/etc/haproxy/redirects/normal"
+    - "/etc/haproxy/redirects/path"
+  when: haproxy_redirect is defined or haproxy_redirect_path is defined
+  tags:
+    - haproxy
+    - haproxy-config
+
+- name: Ensures domain lst are templated and present
+  template:
+    src: "domain.lst"
+    dest: "/etc/haproxy/{{ item.key }}.lst"
+  with_dict: "{{ haproxy_backends }}" 
+  register: haproxy_template
+  when: haproxy_backends is defined
+  tags:
+    - haproxy
+    - haproxy-config
+
+- name: Ensures redirect lst are templated and present
+  template:
+    src: "domain.lst"
+    dest: "/etc/haproxy/redirects/normal/{{ item.key }}-redirect.lst"
+  with_dict: "{{ haproxy_redirect }}" 
+  register: haproxy_redirect
+  when: haproxy_redirect is defined
+  tags:
+    - haproxy
+    - haproxy-config
+
+- name: Ensures redirect path lst are templated and present
+  template:
+    src: "domain.lst"
+    dest: "/etc/haproxy/redirects/path/{{ item.key }}-redirect.lst"
+  with_dict: "{{ haproxy_redirect_path }}" 
+  register: haproxy_redirect_path
+  when: haproxy_redirect_path is defined
+  tags:
+    - haproxy
+    - haproxy-config
+
+- name: Ensures force_https list in present
+  template:
+    src: "force-https.lst"
+    dest: "/etc/haproxy/force-https.lst"
+  register: haproxy_force_https
+  when: haproxy_force_https_domains is defined
+  tags:
+    - haproxy
+    - haproxy-config
+
+- name: "check haproxycfg and reload"
+  shell: haproxy -f /etc/haproxy/haproxy.cfg -c
+  notify:
+     - reload haproxy
+  when: haproxy_config|changed or haproxy_template|changed or haproxy_force_https|changed or haproxy_redirect|changed or haproxy_redirect_path|changed
+  tags:
+    - haproxy
+    - haproxy-config
