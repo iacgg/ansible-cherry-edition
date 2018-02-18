@@ -1,0 +1,92 @@
+---
+- name: Ensure elasticsearch is present
+  apt:
+    deb: "{{ elasticsearch_deb }}"
+    state: present
+  tags:
+    - elasticsearch
+
+- name: Ensures elasticsearch data and log path exists
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: "elasticsearch"
+    group: "elasticsearch"
+    mode: 0744
+  with_items:
+    - "{{ elasticsearch_data_path }}"
+    - "{{ elasticsearch_logs_path }}"
+  tags:
+    - elasticsearch
+
+- name: Ensures ES_HEAP_SIZE is up to date
+  replace:
+    path: "/etc/default/elasticsearch"
+    regexp: "^#ES_HEAP_SIZE=.+$"
+    replace: "ES_HEAP_SIZE={{ elasticsearch_heap_size }}"
+  when: elasticsearch_heap_size is defined
+  notify: restart elasticsearch
+  tags:
+    - elasticsearch
+    - elasticsearch-config
+
+- name: Ensures JVM Options sets min. heap size
+  replace:
+    path: "/etc/elasticsearch/jvm.options"
+    regexp: "^-Xms.+"
+    replace: "-Xms{{ elasticsearch_heap_size_jvm }}"
+  when: elasticsearch_heap_size_jvm is defined
+  notify: restart elasticsearch
+  tags:
+    - elasticsearch
+    - elasticsearch-config
+
+- name: Ensures JVM Options sets max. heap size
+  replace:
+    path: "/etc/elasticsearch/jvm.options"
+    regexp: "^-Xmx.+"
+    replace: "-Xmx{{ elasticsearch_heap_size_jvm }}"
+  when: elasticsearch_heap_size_jvm is defined
+  notify: restart elasticsearch
+  tags:
+    - elasticsearch
+    - elasticsearch-config
+
+- name: Ensures elasticsearch.service.d folder exists
+  file:
+    name: "/etc/systemd/system/elasticsearch.service.d"
+    state: directory
+    owner: "elasticsearch"
+    group: "elasticsearch"
+    mode: 0744
+  when: elasticsearch_systemd_override
+  tags:
+    - elasticsearch
+
+- name: Ensures custom elasticsearch.service is up to date
+  template:
+    src: "override.j2"
+    dest: "/etc/systemd/system/elasticsearch.service.d/override.conf"
+  when: elasticsearch_systemd_override
+  tags:
+    - elasticsearch
+    - elasticsearch-config
+ 
+- name: Reload elasticsearch deamon
+  systemd:
+    daemon_reload: yes
+    name: elasticsearch
+  when: elasticsearch_systemd_override and ansible_distribution_release != "trusty"
+  tags:
+    - elasticsearch
+    - elasticsearch-config
+ 
+- name: Ensures elasticsearch config is up to date
+  template:
+    src: "elasticsearch.yml.j2"
+    dest: "/etc/elasticsearch/elasticsearch.yml"
+  notify: restart elasticsearch
+  tags:
+    - elasticsearch
+    - elasticsearch-config
+

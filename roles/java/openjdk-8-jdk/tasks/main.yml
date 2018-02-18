@@ -1,0 +1,8 @@
+---
+- name: Ensures java 8 is installed 
+  package:
+    name: "openjdk-8-jdk"
+    state: present
+  tags:
+    - openjdk-8-jdk
+    - java

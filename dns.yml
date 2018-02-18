@@ -1,5 +1,0 @@
----
-- hosts: dns
-  roles:
-    - role: bind
-      when: "dns_managed|default(false)"

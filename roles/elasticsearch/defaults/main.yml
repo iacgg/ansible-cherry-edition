@@ -1,0 +1,15 @@
+---
+elasticsearch_deb: "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.6/elasticsearch-2.4.6.deb"
+elasticsearch_cluster_name: "elasticsearch"
+elasticsearch_data_path: "/var/lib/elasticsearch/data"
+elasticsearch_logs_path: "/var/log/elasticsearch"
+elasticsearch_bootstrap_memory_lock: false
+elasticsearch_systemd_override: false
+elasticsearch_network_host: false
+
+### https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html
+## Do not need to be selected. This is only if we split nodes tasks.
+elasticsearch_master_only: false
+elasticsearch_data_only: false
+elasticsearch_ingest_only: false
+elasticsearch_coordinating_only: false

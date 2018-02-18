@@ -1,0 +1,41 @@
+---
+graylog_managed: true
+
+nginx_server_name: "graylog.101.dk"
+nginx_x_graylog_server_url: "http://$host/api"
+nginx_proxy_pass_url: "http://127.0.0.1:9000;"
+
+nginx_config:
+  graylog:
+    server_name: "{{ nginx_server_name }} graylog.101.dk"
+    locations:
+      /:
+        proxy_set_header:
+          - "Host $http_host;"
+          - "X-Forwarded-Host $host;"
+          - "X-Forwarded-Server $host;"
+          - "X-Forwarded-For $proxy_add_x_forwarded_for;"
+          - "X-Graylog-Server-URL  {{ nginx_x_graylog_server_url }};"
+        proxy_pass:
+          - "{{ nginx_proxy_pass_url }}"
+
+elasticsearch_cluster_name: "graylog"
+elasticsearch_data_path: "/mnt/elasticsearch/data"
+elasticsearch_logs_path: "/mnt/elasticsearch/logs"
+
+mongodb_data_path: "/mnt/mongodb/data"
+mongodb_logs_path: "/mnt/mongodb/logs"
+
+graylog_web_endpoint_uri: "http://{{ nginx_server_name }}/"
+graylog_es_index_prefix: "graylog"
+graylog_es_cluster_name: "{{ elasticsearch_cluster_name }}"
+graylog_message_journal_dir: "/mnt/graylog/journal"
+
+graylog_server_java_opts:     '-Djava.net.preferIPv4Stack=true -Xms1000m -Xmx1000m -XX:NewRatio=1 -server -XX:+ResizeTLAB -XX:+UseConcMarkSweepGC -XX:+CMSConcurrentMTEnabled -XX:+CMSClassUnloadingEnabled -XX:+UseParNewGC -XX:-OmitStackTraceInFastThrow'
+graylog_message_journal_max_size: 2gb
+
+elasticsearch_heap_size: 1G
+elasticsearch_bootstrap_memory_lock: true
+elasticsearch_systemd_override: true
+elasticsearch_indices_store_throttle_max_byttes_per_sec: 30mb
+

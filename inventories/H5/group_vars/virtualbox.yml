@@ -1,0 +1,7 @@
+---
+env_domain: 101.dk
+host_fqdn: "{{ inventory_hostname }}.{{ env_domain }}"
+
+ansible_host: "{{ ssh_ip }}"
+
+hosts_managed: true

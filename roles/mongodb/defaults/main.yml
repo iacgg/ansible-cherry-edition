@@ -1,0 +1,4 @@
+---
+mongodb_data_path: "/var/lib/mongodb"
+mongodb_log_path: "/var/log/mongodb"
+

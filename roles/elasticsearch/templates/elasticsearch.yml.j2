@@ -1,0 +1,158 @@
+# ======================== Elasticsearch Configuration =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please see the documentation for further information on configuration options:
+# <http://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration.html>
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: {{ elasticsearch_cluster_name }}
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+# node.name: node-1
+#
+# Add custom attributes to the node:
+#
+# node.rack: r1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: {{ elasticsearch_data_path }}
+#
+# Path to log files:
+#
+path.logs: {{ elasticsearch_logs_path }}
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+{% if elasticsearch_bootstrap_memory_lock %}
+bootstrap.memory_lock: true
+{% else %}
+# bootstrap.memory_lock: true
+{% endif %} 
+#
+# Make sure that the `ES_HEAP_SIZE` environment variable is set to about half the memory
+# available on the system and that the owner of the process is allowed to use this limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# Set the bind address to a specific IP (IPv4 or IPv6):
+#
+{% if elasticsearch_network_host %}
+network.host: {{ host_primary_ip }}
+{% else %}
+# network.host: 192.168.0.1
+{% endif %} 
+#
+# Set a custom port for HTTP:
+#
+# http.port: 9200
+#
+# For more information, see the documentation at:
+# <http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-network.html>
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when new node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+{% if elasticsearch_zen_ping_unicast_hosts is defined %}
+discovery.zen.ping.unicast.hosts: {{ elasticsearch_zen_ping_unicast_hosts }}
+{% else %}
+# discovery.zen.ping.unicast.hosts: ["host1", "host2"]
+{% endif %} 
+#
+# Prevent the "split brain" by configuring the majority of nodes (total number of nodes / 2 + 1):
+#
+{% if elasticsearch_zen_minimum_master_nodes is defined %}
+discovery.zen.minimum_master_nodes: {{ elasticsearch_zen_minimum_master_nodes }}
+{% else %}
+# discovery.zen.minimum_master_nodes: 3
+{% endif %} 
+#
+# For more information, see the documentation at:
+# <http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery.html>
+#
+# ---------------------------------- Gateway -----------------------------------
+#
+# Block initial recovery after a full cluster restart until N nodes are started:
+#
+# gateway.recover_after_nodes: 3
+#
+# For more information, see the documentation at:
+# <http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-gateway.html>
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Disable starting multiple nodes on a single system:
+#
+# node.max_local_storage_nodes: 1
+#
+# Require explicit names when deleting indices:
+#
+# action.destructive_requires_name: true
+{% if elasticsearch_master_only %}
+### https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html
+## Dedicated MASTER node ##
+node.master: true
+node.data: false
+node.ingest: false
+search.remote.connect: false
+{% endif %}
+{% if elasticsearch_data_only %}
+### https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html
+## Dedicated DATA node ##
+node.master: false
+node.data: true
+node.ingest: false
+search.remote.connect: false
+{% endif %}
+{% if elasticsearch_ingest_only %}
+### https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html
+## Dedicated INGEST node ##
+node.master: false
+node.data: false
+node.ingest: true
+search.remote.connect: false
+{% endif %}
+{% if elasticsearch_coordinating_only %}
+### https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html
+## Dedicated COORDINATING ONLY node ##
+node.master: false
+node.data: false
+node.ingest: false
+search.remote.connect: false
+{% endif %}
+{% if elasticsearch_indices_store_throttle_max_byttes_per_sec is defined %}
+indices.store.throttle.max_bytes_per_sec: {{ elasticsearch_indices_store_throttle_max_byttes_per_sec }}
+{% endif %} 
+{% if elasticsearch_neos_custom is defined %}
+{% if elasticsearch_neos_custom %}
+node.local: true
+index.number_of_shards: 1
+index.number_of_replicas: 0
+script.file: on
+script.engine.groovy.inline: sandbox
+script.engine.groovy.indexed: sandbox
+script.groovy.sandbox.class_whitelist: java.util.LinkedHashMap
+script.groovy.sandbox.receiver_whitelist:  java.util.Iterator, java.lang.Object, java.util.Map, java.util.Map$Entry
+script.groovy.sandbox.enabled: true
+{% endif %}
+{% endif %}

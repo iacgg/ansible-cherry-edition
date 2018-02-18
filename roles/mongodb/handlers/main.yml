@@ -1,0 +1,13 @@
+---
+- name: start mongodb
+  service:
+    name: "elasticsearch"
+    state: restarted
+    enabled: yes
+
+- name: restart mongodb
+  service:
+    name: "elasticsearch"
+    state: restarted
+    enabled: yes
+

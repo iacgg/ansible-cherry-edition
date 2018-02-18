@@ -1,0 +1,31 @@
+---
+- name: Ensure mongodb is present
+  package:
+    name: "mongodb"
+    state: present
+  notify: start mongodb
+  tags:
+    - mongodb
+
+- name: Ensures mongodb data and log path exists
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: "mongodb"
+    group: "mongodb"
+    mode: 0744
+  with_items:
+    - "{{ mongodb_data_path }}"
+    - "{{ mongodb_logs_path }}"
+  tags:
+    - mongodb
+
+- name: Ensures mongodb config is up to date
+  template:
+    src: "mongodb.conf"
+    dest: "/etc/mongodb.conf"
+  notify: restart mongodb
+  tags:
+    - mongodb
+    - mongodb-config
+

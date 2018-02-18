@@ -1,7 +1,7 @@
 ---
 - name: Ensures syslog server is installed
   package:
-    name: "rsyslog"
+    name: "syslog-ng"
     state: present
   tags:
     - syslog
@@ -10,11 +10,11 @@
 - name: Custom everything log
   template:
     src: "{{ item }}"
-    dest: "/etc/rsyslog.d/{{ item }}"
+    dest: "/etc/syslog-ng/conf.d/{{ item }}"
   with_items:
-    - "15-send-logs.conf"
+    - "01-graylog.conf"
   notify:
-    - restart rsyslog
+    - restart syslog-ng
   tags:
     - syslog
     - syslog-client

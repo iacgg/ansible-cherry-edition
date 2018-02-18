@@ -1,0 +1,111 @@
+---
+- name: Requeirments, this should be moved to other roles
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-software-properties
+    - apt-transport-https
+    - openjdk-8-jre-headless
+    - uuid-runtime
+    - pwgen
+  tags:
+    - graylog
+
+- name: Ensures graylog-repo is downloaded
+  get_url:
+    url: "{{ graylog_deb_url }}"
+    dest: "/root/graylog_repository.deb"
+  register: graylog_deb
+  tags:
+    - graylog
+
+- name: Ensures graylog deb is installed
+  apt:
+    deb: "/root/graylog_repository.deb"
+    state: installed
+    update_cache: true
+  when: graylog_deb|changed
+  tags:
+    - graylog
+
+- name: Ensures graylog-server is present
+  apt:
+    name: "graylog-server"
+    state: present
+    update_cache: true
+  notify: restart graylog-server
+  when: graylog_deb|changed
+  tags:
+    - graylog
+
+- name: Ensures graylog server directory is in place and random data ( https://github.com/Graylog2/graylog2-server/issues/1980 )
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "graylog"
+    group: "graylog"
+    mode: 0744
+  with_items:
+    - "/data"
+    - "{{ graylog_message_journal_dir }}"
+    - "/etc/graylog"
+    - "/etc/graylog/server"
+  tags:
+    - graylog
+    - graylog-config
+
+- name: Enusures graylog server configs has correct permissions
+  file:
+    name: "/etc/graylog/server/{{ item }}"
+    state: file
+    owner: "graylog"
+    group: "graylog"
+    mode: 0744
+  with_items:
+    - "log4j2.xml"
+    - "node-id"
+  notify: restart graylog-server
+  tags:
+    - graylog
+    - graylog-config
+
+- name: Enusures graylog server conf is up to date
+  template:
+    src: "graylog.server.conf"
+    dest: "/etc/graylog/server/server.conf"
+    owner: "graylog"
+    group: "graylog"
+    mode: 0744
+  notify: restart graylog-server
+  tags:
+    - graylog
+    - graylog-config
+
+- name: Ensures graylog default is in place
+  template:
+    src: "graylog.server.default"
+    dest: "{{ graylog_server_defaults_file_path }}"
+    owner: "graylog"
+    group: "graylog"
+    mode: 0744
+  notify: restart graylog-server
+  tags:
+    - graylog
+    - graylog-config
+
+- name: Ensures graylog server should start after reboot
+  file:
+    path: "/etc/init/graylog-server.override"
+    state: absent
+  tags:
+    - graylog
+
+- name: Ensures graylog-server is enabled
+  systemd:
+    name: graylog-server
+    state: started
+    enabled: yes
+  tags:
+    - graylog
+

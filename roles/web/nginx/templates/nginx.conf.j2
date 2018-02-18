@@ -1,0 +1,27 @@
+server
+{
+  listen      80;
+  server_name {{ nginx_config[item.key]['server_name'] }};
+
+{% for location, settings in nginx_config[item.key]['locations'].items()|sort %}
+  location {{ location }}
+    {
+{% if settings['proxy_set_header'] is defined %}
+{% for header in settings['proxy_set_header'] %}
+        proxy_set_header    {{ header }}
+{% endfor %}
+{% endif %}
+{% if settings['proxy_pass'] is defined %}
+{% for value in settings['proxy_pass'] %}
+        proxy_pass    {{ value }}
+{% endfor %}
+{% endif %}
+{% if settings['root'] is defined %}
+{% for value in settings['root'] %}
+        root    {{ value }}
+{% endfor %}
+{% endif %}
+    }
+{% endfor %}
+}
+

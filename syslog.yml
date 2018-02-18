@@ -1,6 +1,0 @@
----
-- hosts: syslog
-  roles:
-    - role: syslog/syslog-server
-      when: "syslog_managed|default(false)"
-

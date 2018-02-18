@@ -1,0 +1,13 @@
+---
+- hosts: graylog
+  roles:
+    - role: java/openjdk-8-jdk
+      when: "graylog_managed|default(false)"
+    - role: web/nginx
+      when: "graylog_managed|default(false)"
+    - role: elasticsearch
+      when: "graylog_managed|default(false)"
+    - role: mongodb
+      when: "graylog_managed|default(false)"
+    - role: graylog
+      when: "graylog_managed|default(false)"

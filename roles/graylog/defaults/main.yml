@@ -1,0 +1,11 @@
+---
+graylog_deb_url: "https://packages.graylog2.org/repo/packages/graylog-2.3-repository_latest.deb"
+
+graylog_server_defaults_file_path: "/etc/default/graylog-server"
+graylog_message_journal_dir: "/var/lib/graylog-server"
+
+graylog_server_java_opts:     '-Djava.net.preferIPv4Stack=true -Xms1500m -Xmx1500m -XX:NewRatio=1 -server -XX:+ResizeTLAB -XX:+UseConcMarkSweepGC -XX:+CMSConcurrentMTEnabled -XX:+CMSClassUnloadingEnabled -XX:+UseParNewGC -XX:-OmitStackTraceInFastThrow'
+graylog_server_args:          ''
+graylog_server_wrapper:       ''
+
+graylog_root_password: "3a5692345a7ceec81f3e304691ae9e3af860a0de9c7c059c3273e7cc9b6de239"
