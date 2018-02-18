@@ -1,0 +1,4 @@
+---
+
+- name: Bootstraping python
+  raw: "apt-get install -y python python-apt"

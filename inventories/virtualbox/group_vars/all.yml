@@ -1,6 +1,0 @@
----
-env_domain: local
-host_fqdn: "{{ inventory_hostname }}.{{ env_domain }}"
-dns_ip: "192.168.50.20"
-
-rsyslog_server_ip: syslog01.local
