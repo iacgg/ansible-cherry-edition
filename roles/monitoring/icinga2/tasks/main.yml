@@ -1,0 +1,27 @@
+---
+- name: Ensures gpg key is present for icinga
+  apt_key:
+    url: "{{ icinga_gpg_key }}"
+    id: "{{ icinga_gpg_id }}"
+    state: present
+  register: icinga_gpg
+  tags:
+    - icinga
+
+- name: Ensures repo for icinga is present
+  apt_repository:
+    repo: "{{ icinga_repo }}"
+    state: present
+    update_cache: yes
+  when: icinga_gpg|changed
+  tags:
+    - icinga
+
+- name: Ensures icinga is installed
+  package:
+    name: icinga2
+    state: present
+  notify: enable icinga
+  tags:
+    - icinga
+
