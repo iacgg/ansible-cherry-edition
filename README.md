@@ -13,4 +13,7 @@ Following [Ansible best practice](https://docs.ansible.com/ansible/latest/playbo
 
 Bootstrap
 
-ansible-playbook -i inventories/H5/virtualbox  bootstrap.yml  -u bootstrap -k -K
+`$ ansible-playbook -i inventories/H5/virtualbox  bootstrap.yml  -u bootstrap -k -K`
+The bootstrap roles install python and python-apt, so ansible with or without check mode can be used
+
+
