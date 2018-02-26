@@ -5,6 +5,7 @@
   with_items:
     - "keepalived"
     - "psmisc"
+  register: keepalived_config
   tags:
     - keepalived
 
@@ -12,6 +13,13 @@
   template:
     src: "keepalived.conf.j2"
     dest: "/etc/keepalived/keepalived.conf"
+  register: keepalived_config
   tags:
     - keepalived
     - keepalived-config
+
+- name: Ensures keepalived is restarted
+  service:
+    name: "keepalived"
+    state: restarted
+  when: keepalived_config|changed

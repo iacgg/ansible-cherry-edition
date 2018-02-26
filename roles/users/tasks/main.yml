@@ -1,0 +1,187 @@
+---
+- name: Load a variable file based on the OS type
+  include_vars: "{{ item }}"
+  with_items:
+    - "default.yml"
+    - "{{ ansible_distribution }}.yml"
+  tags:
+    - users
+
+- name: Ensures groups are created
+  group:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ distribution_user_groups | union(other_user_groups | default([ ])) }}"
+  when: force_group_creation|default(false)
+  tags:
+    - groups
+    - users
+
+- name: Ensure user groups exists
+  group:
+    name: "{{ item.key }}"
+    state: present
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'operations' in item.value.permissions"
+  tags:
+    - groups
+    - users
+  
+- name: Ensure users created
+  user:
+    name: "{{ item.key }}"
+    createhome: yes
+    shell: "{{ user_shell|default('/bin/bash') }}"
+    state: "{{ item.value.state | default('present') }}"
+    password: "{{ item.value.password }}"
+    group: "{{ item.key }}"
+    groups: "{{ distribution_user_groups | union(other_user_groups | default([ ])) | join (',') }}"
+    append: yes
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'operations' in item.value.permissions"
+  tags:
+    - users
+
+- name: User .ssh dir
+  file:
+    path: "/home/{{ item.key }}/.ssh"
+    owner: "{{ item.key }}"
+    group: "{{ item.key }}"
+    mode: 0700
+    state: "directory"
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'operations' in item.value.permissions"
+  tags:
+    - users
+    - users-keys
+
+- name: User authorized_keys
+  template:
+    src: "authorized_keys"
+    dest: "/home/{{ item.key }}/.ssh/authorized_keys"
+    owner: "{{ item.key }}"
+    group: "{{ item.key }}"
+    mode: 0600
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'operations' in item.value.permissions"
+  tags:
+    - users
+    - users-keys
+    
+## Stage only start##
+
+- name: Ensure user groups exists [stage only]
+  group:
+    name: "{{ item.key }}"
+    state: present
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'staging' in item.value.permissions and 'staging' in group_names"
+  tags:
+    - groups
+    - users
+  
+- name: Ensure users created [stage only]
+  user:
+    name: "{{ item.key }}"
+    createhome: yes
+    shell: "{{ user_shell|default('/bin/bash') }}"
+    state: "{{ item.value.state | default('present') }}"
+    password: "{{ item.value.password|default('*') }}"
+    group: "{{ item.key }}"
+    groups: "{{ distribution_user_groups | union(other_user_groups | default([ ])) | join (',') }}"
+    append: yes
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'staging' in item.value.permissions and 'staging' in group_names"
+  tags:
+    - users
+
+- name: User .ssh dir [stage only]
+  file:
+    path: "/home/{{ item.key }}/.ssh"
+    owner: "{{ item.key }}"
+    group: "{{ item.key }}"
+    mode: 0700
+    state: "directory"
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'staging' in item.value.permissions and 'staging' in group_names"
+  tags:
+    - users
+    - users-keys
+
+- name: User authorized_keys [stage only]
+  template:
+    src: "authorized_keys"
+    dest: "/home/{{ item.key }}/.ssh/authorized_keys"
+    owner: "{{ item.key }}"
+    group: "{{ item.key }}"
+    mode: 0600
+  with_dict: "{{ users }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "'staging' in item.value.permissions and 'staging' in group_names"
+  tags:
+    - users
+    - users-keys
+
+## Stage only end ##
+
+- name: Ensures sudoers is present
+  apt:
+    pkg: "sudo"
+    state: present
+  tags:
+    - users
+    - sudoers
+    - sudoers-config
+
+- name: Ensured sudoers template is deployed
+  template:
+    src: "sudoers.j2"
+    dest: "{{ sudoers_location | default('/etc/sudoers') }}"
+    owner: "root"
+    group: "{{ root_group|default('root') }}"
+    mode: 0440
+    validate: "visudo -cf %s"
+  tags:
+    - users
+    - sudoers
+    - sudoers-config
+
+- name: Ensure keys added to ubuntu user
+  authorized_key:
+    user: "ubuntu"
+    key: "{{ item.value.pubkey | default([]) | join('\n') }}" 
+    state: "{{ item.value.state | default('present') }}"
+  with_dict: "{{ ubuntu_keys }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "aws_ubuntu_users|default(false)"
+  tags:
+    - users
+
+- name: Ensure keys added to www-data user
+  authorized_key:
+    user: "www-data"
+    key: "{{ item.value.pubkey | default([]) | join('\n') }}" 
+    state: "{{ item.value.state | default('present') }}"
+  with_dict: "{{ www_data_keys }}"
+  loop_control:
+    label:  "{{ item.key }}"
+  when: "www_data_custom_keys|default(false)"
+  tags:
+    - users
+

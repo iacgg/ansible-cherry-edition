@@ -2,8 +2,8 @@
 vrrp_groups:
   vg1:
       private:
-        vip: "10.100.51.14"
-        range: "10.100.51.14/24"
+        vip: "192.168.3.49"
+        range: "192.168.3.49/22"
         id: 101
         iface: "eth0"
         #scripts: "haproxy"
@@ -65,13 +65,13 @@ haproxy_backends:
 #      -
   web_cluster:
     host:
-      web01: 10.100.51.10:80
-      web02: 10.100.51.11:80
+      web01: 192.168.3.60:80
+      web02: 192.168.3.61:80
     domains:
       - www.101.dk
       - 101.dk
-#  graylog:
-#    host:
-#      fi_graylog: 192.168.3.70:80
-#    domains:
-#      - graylog.101.dk
+  graylog:
+    host:
+      fi_graylog: 192.168.3.70:80
+    domains:
+      - graylog.101.dk

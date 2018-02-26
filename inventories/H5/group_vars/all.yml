@@ -1,1 +1,11 @@
 ---
+users:
+  sb:
+    name: "Sebastian Berendt"
+    permissions: [ "operations" ]
+    password: '$1$101$FbWVp4N.KQOYSK1YnthLy1'
+    pubkey: [ "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAprk2byPhMRg9dIrzsAkuY7HlHAcv1TbvCjpkc3TEFBfInC2BTxc5zfHe9tSy72CakFtQIMsleZ/Hyq9rdnQko8pMto+PMaYc/UVCsGz9h/RnQYQGyafGjBld5F+bWIedouadrXGMwJ15qiE5d9vjxzaed6cz17zijOCjKVT1GhF0Aj7QLxsUKMpn+TCaASwUA6gUZrp2EoUFj+77SkHmuzBOpja6oP1QUgIeN0aJrj4zNrqXpJxPoMjgKFoA5rkGfx58ysGxs94PbmjVnIgyEreEtUNMYcPSeKVcwvV28XXUTbBCGlXiFL029VDKUEyBNdyIePNyTH4wtbU/DjQkaw== Sebastian Berendt (gitlab.peytz.dk)" ]
+
+syslog_url: "graylog.101.loc"
+syslog_protocol: "tcp"
+syslog_port: 2003

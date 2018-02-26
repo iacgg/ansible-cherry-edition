@@ -3,6 +3,8 @@
   roles:
     - role: resolv
       when: "resolv_managed|default(false)"
+    - role: users
+      when: "users_managed|default(true)"
     - role: hosts
       when: "hosts_managed|default(true)"
     - role: syslog/syslog-client

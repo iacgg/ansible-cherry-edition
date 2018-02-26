@@ -1,0 +1,10 @@
+---
+
+user_shell: "/bin/sh"
+
+distribution_user_groups:
+  - "wheel"
+
+sudoers_location: "/usr/local/etc/sudoers"
+
+root_group: "wheel"

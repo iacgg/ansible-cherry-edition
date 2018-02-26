@@ -1,13 +1,13 @@
 ---
 graylog_managed: true
 
-nginx_server_name: "graylog.101.dk"
+nginx_server_name: "graylog.101.loc"
 nginx_x_graylog_server_url: "http://$host/api"
 nginx_proxy_pass_url: "http://127.0.0.1:9000;"
 
 nginx_config:
   graylog:
-    server_name: "{{ nginx_server_name }} graylog.101.dk"
+    server_name: "{{ nginx_server_name }}" #graylog.101.loc"
     locations:
       /:
         proxy_set_header:
