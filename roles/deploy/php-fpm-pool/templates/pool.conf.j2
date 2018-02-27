@@ -1,0 +1,13 @@
+[{{ item.key }}]
+user = {{ item.value.user|default('www-data') }}
+group = {{ item.value.group|default('www-data') }}
+listen = /var/run/php/php-fpm-{{ item.key }}.sock
+listen.owner = {{ item.value.user|default('www-data') }}
+listen.group = {{ item.value.group|default('www-data') }}
+listen.mode = {{ item.value.mode|default('0666') }}
+pm = {{ item.value.pm|default('ondemand') }}
+pm.max_children = {{ item.value.max_children|default('5') }}
+pm.process_idle_timeout = {{ item.value.process_idle_timeout|default('10s') }}
+pm.max_requests = {{ item.value.max_requests|default('200') }}
+
+

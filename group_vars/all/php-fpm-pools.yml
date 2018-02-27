@@ -1,0 +1,7 @@
+---
+php_pools:
+  yourls:
+    pm: "ondemand"
+    max_children: "10"
+    process_idle_timeout: "10s"
+    max_requests: "200"

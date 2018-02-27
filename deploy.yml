@@ -3,3 +3,7 @@
   roles:
     - role: deploy/mysqldb
     - role: deploy/mysqluser
+
+- hosts: web
+  roles:
+    - role: deploy/php-fpm-pool

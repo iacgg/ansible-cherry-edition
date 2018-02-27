@@ -3,3 +3,5 @@
   roles:
     - role: web/apache2
       when: "web_managed|default(true)"
+    - role: web/php
+      when: "web_managed|default(true)"

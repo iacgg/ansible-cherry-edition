@@ -1,0 +1,22 @@
+---
+- name: Ensures php fpm pool is created
+  template:
+    src: "pool.conf.j2"
+    dest: "/etc/php/7.0/fpm/pool.d/{{ item.key }}.conf"
+  with_dict: "{{ php_pools }}"
+  register: php_pool
+  tags:
+    - web
+    - php
+    - deploy
+
+- name: Ensures php7.0-fpm is reloaded
+  service:
+    name: php7.0-fpm
+    state: restarted
+  when: php_pool|changed
+  tags:
+    - web
+    - php
+    - deploy
+

@@ -3,3 +3,5 @@
 deploy_mysql_databases:
   wp101:
     state: present
+  yourls:
+    state: present

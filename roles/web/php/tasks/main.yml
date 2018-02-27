@@ -1,0 +1,15 @@
+---
+- name: Ensures php7 and packages is installed
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - php7.0
+    - php7.0-fpm
+    - php7.0-cli
+    - php7.0-mysql
+    - php7.0-curl
+  tags:
+    - web
+    - php
+

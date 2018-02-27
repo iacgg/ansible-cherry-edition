@@ -9,4 +9,8 @@ deploy_mysql_user:
     password: "wp101dk!"
     grant: "wp101.*:all"
     host: "10.100.51.%"
+  yourls:
+    password: "you123"
+    grant: "yourls.*:all"
+    host: "10.100.51.%"
 
