@@ -15,63 +15,79 @@ vrrp_scripts:
     interval: 2
 
 haproxy_stats_ip: 127.0.0.1
-haproxy_log_format: haproxy_lua
 
-## If using custom LE backend
-#haproxy_letsencrypt_backend: 127.0.0.1:8088
+haproxy_backends:
+  - web_cluster
+  - mysql_cluster
 
-#haproxy_force_https_domains:
-#  - 101.dk
+haproxy_frontends:
+  public-web:
+    bind:
+      - "*:80 id 10"
+    default_backend: web_cluster
+    log_format: haproxy_lua
+    backends:
+      web_cluster:
+        host:
+          web01: 10.100.51.10:80
+          web02: 10.100.51.11:80
+        domains:
+          - www.101.dk
+          - 101.dk
+        option: "httpchk GET /"
+        mode: "http"
+  mysql-intern:
+    bind:
+      - "*:3306 id 10"
+    mode: "tcp"
+    default_backend: "mysql_cluster"
+    backends:
+      mysql_cluster:
+        host:
+          mysql01: 10.100.51.20:3306
+          mysql02: 10.100.51.21:3306
+          mysql03: 10.100.51.22:3306
+        custom_check: "check port 9200 inter 12000 rise 3 fall 3"
+        option: "httpchk"
+        mode: "tcp"
+        balance: "leastconn"
+        #domains:
+        #  - 
 
-#haproxy_redirect_path:
-#  sogndk:
-#    url: https
-#    aliases:
-#      - 101.dk
-#    paths:
-#      - /
-
-#haproxy_redirect:
-#  folkekirkensit:
-#    url: https://101.dk
-#    aliases:
-#      - 101.dk
-
-#haproxy_method_to_backend:
-#  - name: es
-#    domain: es.101.dk
-#    method:
-#      - GET
-#      - OPTIONS
-#      - HEAD
-#    backend: elasticsearch
-#    block_other: true
-
-## Haproxy backends and domians
-haproxy_default_backend: web_cluster
-
+    #letsencrypt_backend: 127.0.0.1:8088
+    #method_to_backend:
+    #  - name: es
+    #    domain: es.101.dk
+    #    method:
+    #      - GET
+    #      - OPTIONS
+    #      - HEAD
+    #    backend: elasticsearch
+    #    block_other: true
+    #redirect_path:
+    #  101dk:
+    #    url: https
+    #    aliases:
+    #      - 101.dk
+    #    paths:
+    #      - /
+    #redirect:
+    #  henrik:
+    #    url: https://101.dk
+    #    aliases:
+    #      - 101.dk
+    #force_https_domains:
+    #  - 101.dk
+  
 #haproxy_resolvers:
 #  google:
 #    nameservers:
 #      public-0: 8.8.8.8:53
 #      public-1: 8.8.4.4:53
 
-haproxy_backends:
 #  elasticsearch:
 #    host:
 #      sogndk_es: es.101:80
 #    custom_check: "check inter 5000 resolvers google"
 #    domains:
 #      -
-  web_cluster:
-    host:
-      web01: 10.100.51.10:80
-      web02: 10.100.51.11:80
-    domains:
-      - www.101.dk
-      - 101.dk
-#  graylog:
-#    host:
-#      fi_graylog: 192.168.3.70:80
-#    domains:
-#      - graylog.101.dk

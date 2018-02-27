@@ -24,6 +24,14 @@
     - mysql
     - percona
 
+- name: Ensures xinetd is installed so it can be used for checks
+  package:
+    name: xinetd
+    state: present 
+  tags:
+    - mysql
+    - percona
+
 - name: Ensures percona extradb is present and dependencies
   package:
     name: "percona-xtradb-cluster-full-57"
@@ -99,3 +107,21 @@
     - mysql
     - percona
 
+- name: Ensures mysqlchk is places for haproxy
+  lineinfile:
+    path: "/etc/services"
+    line: "mysqlchk 9200/tcp  # mysqlchk"
+    state: present
+  register: services
+  tags:
+    - mysql
+    - percona
+
+- name: Ensures services is restarted
+  service:
+    name: "xinetd"
+    state: restarted
+  when: services|changed
+  tags:
+    - mysql
+    - percona

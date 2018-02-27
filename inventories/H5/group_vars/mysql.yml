@@ -5,3 +5,4 @@ percona_active_nodes: "10.100.51.20,10.100.51.21,10.100.51.22"
 percona_ip: "{{ ssh_ip }}"
 percona_user: "sstuser"
 percona_password: "pa$$w0rd"
+

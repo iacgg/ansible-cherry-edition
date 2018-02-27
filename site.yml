@@ -4,3 +4,4 @@
 - import_playbook: graylog.yml
 - import_playbook: web.yml
 - import_playbook: mysql.yml
+- import_playbook: deploy.yml

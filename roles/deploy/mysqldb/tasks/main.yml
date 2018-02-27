@@ -1,0 +1,9 @@
+---
+
+- name: Ensures mysql databases exists
+  mysql_db:
+    name: "{{ item.key }}"
+    state: "{{ item.value.state }}"
+  with_dict: "{{ deploy_mysql_databases }}"
+  tags:
+    - deploy

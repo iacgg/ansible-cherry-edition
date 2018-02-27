@@ -38,67 +38,78 @@
     - haproxy
     - haproxy-config
 
-- name: Ensures redirect folders exist
-  file:
-    state: "directory"
-    path: "{{ item }}"
-  with_items:
-    - "/etc/haproxy/redirects"
-    - "/etc/haproxy/redirects/normal"
-    - "/etc/haproxy/redirects/path"
-  when: haproxy_redirect is defined or haproxy_redirect_path is defined
-  tags:
-    - haproxy
-    - haproxy-config
+#- name: Ensures redirect folders exist
+#  file:
+#    state: "directory"
+#    path: "{{ item }}"
+#  with_items:
+#    - "/etc/haproxy/redirects"
+#    - "/etc/haproxy/redirects/normal"
+#    - "/etc/haproxy/redirects/path"
+#  when: haproxy_redirect is defined or haproxy_redirect_path is defined
+#  tags:
+#    - haproxy
+#    - haproxy-config
+
+#- name: Ensures domain lst are templated and present
+#  template:
+#    src: "domain.lst"
+#    dest: "/etc/haproxy/{{ item.key }}.lst"
+#  with_dict: "{{ haproxy_backends }}" 
+#  register: haproxy_template
+#  when: haproxy_backends is defined
+#  tags:
+#    - haproxy
+#    - haproxy-config
 
 - name: Ensures domain lst are templated and present
   template:
     src: "domain.lst"
-    dest: "/etc/haproxy/{{ item.key }}.lst"
-  with_dict: "{{ haproxy_backends }}" 
+    dest: "/etc/haproxy/{{ item }}.lst"
+  with_items: "{{ haproxy_backends }}" 
   register: haproxy_template
   when: haproxy_backends is defined
   tags:
     - haproxy
     - haproxy-config
 
-- name: Ensures redirect lst are templated and present
-  template:
-    src: "domain.lst"
-    dest: "/etc/haproxy/redirects/normal/{{ item.key }}-redirect.lst"
-  with_dict: "{{ haproxy_redirect }}" 
-  register: haproxy_redirect
-  when: haproxy_redirect is defined
-  tags:
-    - haproxy
-    - haproxy-config
+#- name: Ensures redirect lst are templated and present
+#  template:
+#    src: "domain.lst"
+#    dest: "/etc/haproxy/redirects/normal/{{ item.key }}-redirect.lst"
+#  with_dict: "{{ haproxy_redirect }}" 
+#  register: haproxy_redirect
+#  when: haproxy_redirect is defined
+#  tags:
+#    - haproxy
+#    - haproxy-config
+#
+#- name: Ensures redirect path lst are templated and present
+#  template:
+#    src: "domain.lst"
+#    dest: "/etc/haproxy/redirects/path/{{ item.key }}-redirect.lst"
+#  with_dict: "{{ haproxy_redirect_path }}" 
+#  register: haproxy_redirect_path
+#  when: haproxy_redirect_path is defined
+#  tags:
+#    - haproxy
+#    - haproxy-config
 
-- name: Ensures redirect path lst are templated and present
-  template:
-    src: "domain.lst"
-    dest: "/etc/haproxy/redirects/path/{{ item.key }}-redirect.lst"
-  with_dict: "{{ haproxy_redirect_path }}" 
-  register: haproxy_redirect_path
-  when: haproxy_redirect_path is defined
-  tags:
-    - haproxy
-    - haproxy-config
-
-- name: Ensures force_https list in present
-  template:
-    src: "force-https.lst"
-    dest: "/etc/haproxy/force-https.lst"
-  register: haproxy_force_https
-  when: haproxy_force_https_domains is defined
-  tags:
-    - haproxy
-    - haproxy-config
+#- name: Ensures force_https list in present
+#  template:
+#    src: "force-https.lst"
+#    dest: "/etc/haproxy/force-https.lst"
+#  register: haproxy_force_https
+#  when: haproxy_force_https_domains is defined
+#  tags:
+#    - haproxy
+#    - haproxy-config
 
 - name: "check haproxycfg and reload"
   shell: haproxy -f /etc/haproxy/haproxy.cfg -c
   notify:
      - reload haproxy
-  when: haproxy_config|changed or haproxy_template|changed or haproxy_force_https|changed or haproxy_redirect|changed or haproxy_redirect_path|changed
+  when: haproxy_config|changed or haproxy_template|changed #or haproxy_force_https|changed or haproxy_redirect|changed or haproxy_redirect_path|changed
   tags:
     - haproxy
     - haproxy-config

@@ -1,0 +1,5 @@
+---
+- hosts: mysql
+  roles:
+    - role: deploy/mysqldb
+    - role: deploy/mysqluser

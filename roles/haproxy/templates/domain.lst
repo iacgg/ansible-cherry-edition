@@ -1,11 +1,20 @@
 # {{ ansible_managed }}
-{% if item.value['domains'] is defined %}
-{% for d in item.value['domains'] %}
+{% for key, value in haproxy_frontends.iteritems() %}
+{% for b,i in value.backends.iteritems() %}
+#{{ b }} 
+#{{ item }}
+
+{% if i.domains is defined %}
+
+{% if item == b %}
+{% for d in i.domains %}
 {{ d }}
 {% endfor %}
 {% endif %}
-{% if item.value['aliases'] is defined %}
-{% for a in item.value['aliases'] %}
-{{ a }}
-{% endfor %}
+
 {% endif %}
+
+{% endfor %}
+{% endfor %}
+
+
