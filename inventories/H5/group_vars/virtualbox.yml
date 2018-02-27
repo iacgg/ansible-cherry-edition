@@ -5,3 +5,9 @@ host_fqdn: "{{ inventory_hostname }}.{{ env_domain }}"
 ansible_host: "{{ ssh_ip }}"
 
 hosts_managed: true
+
+percona_master: "mysql01"
+percona_active_nodes: "192.168.3.80,192.168.3.81,192.168.3.82"
+percona_ip: "{{ ssh_ip }}"
+percona_user: "sstuser"
+percona_password: "pa$$w0rd"

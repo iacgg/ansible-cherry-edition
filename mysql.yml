@@ -1,0 +1,5 @@
+---
+- hosts: mysql
+  roles:
+    - role: percona-extradb
+      when: "mysql_managed|default(true)"

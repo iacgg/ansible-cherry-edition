@@ -1,0 +1,101 @@
+---
+- name: Ensures percona deb is present
+  apt:
+    deb: "https://repo.percona.com/apt/percona-release_0.1-4.{{ ansible_distribution_release }}_all.deb"
+    state: present
+  register: percona_deb
+  tags:
+    - mysql
+    - percona
+
+- name: Update cache
+  apt:
+    update_cache: yes
+  when: percona_deb|changed 
+  tags:
+    - mysql
+    - percona
+
+- name: Ensures apparmor is killed and make i go away
+  package:
+    name: apparmor
+    state: absent 
+  tags:
+    - mysql
+    - percona
+
+- name: Ensures percona extradb is present and dependencies
+  package:
+    name: "percona-xtradb-cluster-full-57"
+    state: present
+    update_cache: yes
+  register: percona_install
+  tags:
+    - mysql
+    - percona
+
+- name: Ensures pecona conf is include
+  lineinfile:
+    path: "/etc/mysql/my.cnf"
+    regexp: "^!include /etc/mysql/percona.cnf"
+    line: "!include /etc/mysql/percona.cnf"
+    insertafter: "^includedir.+"
+    state: present
+  tags:
+    - mysql
+    - percona
+
+- name: Ensures percona.conf is present
+  template:
+    src: "percona.cnf.j2"
+    dest: "/etc/mysql/percona.cnf"
+  register: percona_config
+  tags:
+    - mysql
+    - percona
+
+- name: Stop mysql services
+  service:
+    name: "mysql"
+    state: stopped
+    enabled: "yes"
+  when: percona_install|changed
+  tags:
+    - mysql
+    - percona
+
+- name: Start mysql services with bootstraping
+  shell: "/etc/init.d/mysql bootstrap-pxc"
+  when: "percona_config|changed and percona_master == inventory_hostname"
+  tags:
+    - mysql
+    - percona
+
+- name: Ensures python module for mysql is present
+  package:
+    name: "python-mysqldb"
+    state: present
+  tags:
+    - mysql
+    - percona
+
+- name: Ensures mysql users exists for replication
+  mysql_user:
+    name: "{{ percona_user }}"
+    password: "{{ percona_password }}"
+    priv: "*.*:RELOAD,LOCK TABLES,PROCESS,REPLICATION CLIENT"
+    state: present
+  when: "percona_config|changed and percona_master == inventory_hostname"
+  tags:
+    - mysql
+    - percona
+
+- name: Start mysql services
+  service:
+    name: "mysql"
+    state: started
+  when: "percona_master != inventory_hostname"
+  tags:
+    - mysql
+    - percona
+

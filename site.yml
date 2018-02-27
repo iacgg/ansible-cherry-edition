@@ -1,5 +1,6 @@
 ---
 - import_playbook: core.yml
-- import_playbook: web.yml
-- import_playbook: graylog.yml
 - import_playbook: haproxy.yml
+- import_playbook: graylog.yml
+- import_playbook: web.yml
+- import_playbook: mysql.yml

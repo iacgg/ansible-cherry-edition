@@ -2,7 +2,7 @@
 haproxy
 web
 graylog
-#mysql
+mysql
 
 [haproxy]
 haproxy01 ssh_ip=10.100.51.15
@@ -12,10 +12,10 @@ haproxy02 ssh_ip=10.100.51.16
 web01 ssh_ip=10.100.51.10
 web02 ssh_ip=10.100.51.11
 
-#[mysql]
-#mysql01 ssh_ip=10.100.51.20
-#mysql02 ssh_ip=10.100.51.21
-#mysql03 ssh_ip=10.100.51.22
+[mysql]
+mysql01 ssh_ip=10.100.51.20
+mysql02 ssh_ip=10.100.51.21
+mysql03 ssh_ip=10.100.51.22
 
 #[syslog]
 #syslog01 ssh_ip=10.100.60.15
