@@ -7,3 +7,6 @@
 - hosts: web
   roles:
     - role: deploy/php-fpm-pool
+    - role: deploy/nfs
+    - role: deploy/vhosts
+    - role: deploy/vhosts

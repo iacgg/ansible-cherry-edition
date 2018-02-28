@@ -1,0 +1,58 @@
+---
+- name: Ensures nfs-common is installed to support NFS
+  apt:
+    pkg: "nfs-common"
+    state: present
+  tags:
+    - nfs
+    - deploy
+
+- name: Ensures mount folder is in place
+  file:
+    dest: "/mnt/web"
+    state: directory
+  tags:
+    - nfs
+    - deploy
+
+- name: Ensures autofs is in place for auto mounting
+  apt:
+    pkg: "autofs"
+    state: present
+  tags:
+    - nfs
+    - deploy
+
+- name: Ensures autofs configs is in place is in place
+  template:
+    src: "{{ item }}"
+    dest: "/etc/{{ item }}"
+  with_list:
+    - "auto.master"
+    - "auto.nfs"
+  register: autofs_update
+  tags:
+    - nfs
+    - deploy
+
+- name: Ensures autofs is reload
+  service:
+    name: "autofs"
+    state: reloaded
+  when: autofs_update|changed
+  tags:
+    - nfs
+    - deploy
+
+- name: Ensures symlink is in place
+  file:
+    src: "/mnt/web/nfs/{{ item }}"
+    dest: "/var/www/virtual/{{ item }}"
+    owner: "www-data"
+    group: "www-data"
+    state: link
+  with_items:
+    - YOURLS
+  tags:
+    - nfs
+    - deploy

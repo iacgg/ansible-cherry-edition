@@ -1,0 +1,12 @@
+---
+- name: Ensures vhosts is present, the ugly way
+  template:
+    src: "{{ item }}"
+    dest: "/var/www/vhosts/{{ item }}"
+    owner: "www-data"
+    group: "www-data"
+  with_items:
+    - "y.101.dk.conf"
+  tags:
+    - vhosts
+    - deploy
