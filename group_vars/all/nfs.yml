@@ -1,0 +1,13 @@
+---
+
+nfs_files:
+  - "auto.master"
+  - "auto.nfs"
+
+nfs_mounts:
+  auto.nfs:
+    mount_point: "/mnt/web"
+    name: "nfs"
+    fstype: "nfs,rw,proto=tcp,port=2049"
+    server_location: "10.100.60.12"
+    share_name: "/nfs_share"

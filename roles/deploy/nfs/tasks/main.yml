@@ -23,13 +23,24 @@
     - nfs
     - deploy
 
+- name: Set fact used in the templates for autofs
+  set_fact:
+    nfs_dict: "{{ nfs_mounts }}"
+  tags:
+    - nfs
+    - deploy
+
+#- debug:
+#    msg: "{{ nfs_dict }}"
+#  tags:
+#    - nfs
+#    - deploy
+
 - name: Ensures autofs configs is in place is in place
   template:
     src: "{{ item }}"
     dest: "/etc/{{ item }}"
-  with_list:
-    - "auto.master"
-    - "auto.nfs"
+  with_list: "{{ nfs_files }}"
   register: autofs_update
   tags:
     - nfs
@@ -53,6 +64,7 @@
     state: link
   with_items:
     - YOURLS
+    #- wp101
   tags:
     - nfs
     - deploy

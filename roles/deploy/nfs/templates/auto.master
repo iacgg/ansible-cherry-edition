@@ -10,4 +10,6 @@
 #/misc  /etc/auto.misc
 #/net    /etc/auto.net
 
-/mnt/web /etc/auto.nfs
+{% for key, value in nfs_dict.iteritems() %}
+{{ value.mount_point }} /etc/{{ key }}
+{% endfor %}
