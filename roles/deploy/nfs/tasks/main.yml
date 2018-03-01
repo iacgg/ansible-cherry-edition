@@ -55,6 +55,17 @@
     - nfs
     - deploy
 
+- name: yup
+  file:
+    dest: "/mnt/web/nfs/{{ item }}"
+    state: directory
+  with_items:
+    - YOURLS
+    - nextcloud
+  tags:
+    - nfs
+    - deploy
+
 - name: Ensures symlink is in place
   file:
     src: "/mnt/web/nfs/{{ item }}"
@@ -64,7 +75,7 @@
     state: link
   with_items:
     - YOURLS
-    #- wp101
+    - nextcloud
   tags:
     - nfs
     - deploy

@@ -173,7 +173,7 @@ resolvers {{ key }}
     {% endif %} 
 
 {% for hosts in value['host'].items() %}
-    server {{ hosts[0] }} {{ hosts[1] }} {% if value['custom_check'] is defined %}{{ value['custom_check'] }}{% else %}check{% endif %} 
+    server {{ hosts[0] }} {{ hosts[1] }} 
 {% endfor %}
 
 {% endfor %}

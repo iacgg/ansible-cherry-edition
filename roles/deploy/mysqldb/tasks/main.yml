@@ -4,6 +4,8 @@
   mysql_db:
     name: "{{ item.key }}"
     state: "{{ item.value.state }}"
+    encoding: "{{ item.value.encoding|default() }}"
+    collation: "{{ item.value.collation|default() }}"
   with_dict: "{{ deploy_mysql_databases }}"
   tags:
     - deploy

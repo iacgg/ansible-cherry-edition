@@ -13,4 +13,8 @@ deploy_mysql_user:
     password: "you123"
     grant: "yourls.*:all"
     host: "10.100.51.%"
+  nextcloud:
+    password: "cloud321"
+    grant: "nextcloud.*:all"
+    host: "10.100.51.%"
 

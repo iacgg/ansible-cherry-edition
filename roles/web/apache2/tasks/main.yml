@@ -43,6 +43,9 @@
     - proxy_http
     - proxy_fcgi
     - authz_groupfile
+    - env
+    - dir
+    - mime
   notify:
     - "restart apache2"
   tags:

@@ -5,8 +5,21 @@
     dest: "/var/www/vhosts/{{ item }}"
     owner: "www-data"
     group: "www-data"
+    mode: 0664
+  register: vhosts
   with_items:
     - "y.101.dk.conf"
+    - "nextcloud.conf"
   tags:
     - vhosts
     - deploy
+
+- name: Ensures apache is restart
+  service:
+    name: "apache2"
+    state: restarted
+  when: vhosts|changed
+  tags:
+    - vhosts
+    - deploy
+

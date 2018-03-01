@@ -29,13 +29,14 @@ haproxy_frontends:
     backends:
       web_cluster:
         host:
-          web01: 10.100.51.10:80
-          web02: 10.100.51.11:80
+          web01: 10.100.51.10:80 check
+          web02: 10.100.51.11:80 check backup
         domains:
           - www.101.dk
           - 101.dk
         option: "httpchk GET /"
         mode: "http"
+        balance: "leastconn"
   mysql-intern:
     bind:
       - "*:3306 id 10"
@@ -44,10 +45,9 @@ haproxy_frontends:
     backends:
       mysql_cluster:
         host:
-          mysql01: 10.100.51.20:3306
-          mysql02: 10.100.51.21:3306
-          mysql03: 10.100.51.22:3306
-        custom_check: "check port 9200 inter 12000 rise 3 fall 3"
+          mysql01: 10.100.51.20:3306 check port 9200 inter 12000 rise 3 fall 3
+          mysql02: 10.100.51.21:3306 check port 9200 inter 12000 rise 3 fall 3
+          mysql03: 10.100.51.22:3306 check port 9200 inter 12000 rise 3 fall 3
         option: "httpchk"
         mode: "tcp"
         balance: "leastconn"
