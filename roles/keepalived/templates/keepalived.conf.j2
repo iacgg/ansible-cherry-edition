@@ -1,3 +1,4 @@
+# {{ ansible_managed }}
 {% if vrrp_scripts is defined %}
 {% for name, values in vrrp_scripts.iteritems() %}
 vrrp_script {{ name }} {
@@ -6,8 +7,6 @@ vrrp_script {{ name }} {
 }
 {% endfor %}
 {% endif %}
-
-! mananged by ansible -- don't touch
 
 {% if vrrp_groups is defined %}
 

@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 {% for key, value in nfs_dict.iteritems() %}
 {{ value.name }} -fstype={{ value.fstype }} {{ value.server_location }}:{{ value.share_name }}
 {% endfor %}

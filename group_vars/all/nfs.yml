@@ -11,3 +11,7 @@ nfs_mounts:
     fstype: "nfs,rw,proto=tcp,port=2049"
     server_location: "10.100.60.12"
     share_name: "/nfs_share"
+
+nfs_folder_list:
+  - "YOURLS"
+  - "nextcloud"

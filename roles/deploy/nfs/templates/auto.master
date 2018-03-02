@@ -1,4 +1,6 @@
-#
+# {{ ansible_managed }}
+
+
 # $Id: auto.master,v 1.4 2005/01/04 14:36:54 raven Exp $
 #
 # Sample auto.master file

@@ -30,12 +30,6 @@
     - nfs
     - deploy
 
-#- debug:
-#    msg: "{{ nfs_dict }}"
-#  tags:
-#    - nfs
-#    - deploy
-
 - name: Ensures autofs configs is in place is in place
   template:
     src: "{{ item }}"
@@ -55,13 +49,11 @@
     - nfs
     - deploy
 
-- name: yup
+- name: Ensures nfs folders is created so i can be symlinked
   file:
     dest: "/mnt/web/nfs/{{ item }}"
     state: directory
-  with_items:
-    - YOURLS
-    - nextcloud
+  with_items: "{{ nfs_folder_list }}"
   tags:
     - nfs
     - deploy
@@ -73,9 +65,7 @@
     owner: "www-data"
     group: "www-data"
     state: link
-  with_items:
-    - YOURLS
-    - nextcloud
+  with_items: "{{ nfs_folder_list }}"
   tags:
     - nfs
     - deploy
