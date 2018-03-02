@@ -15,3 +15,4 @@ nfs_mounts:
 nfs_folder_list:
   - "YOURLS"
   - "nextcloud"
+  - "wp101"

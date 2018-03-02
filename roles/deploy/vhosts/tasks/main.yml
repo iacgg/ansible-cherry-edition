@@ -10,6 +10,7 @@
   with_items:
     - "y.101.dk.conf"
     - "nextcloud.conf"
+    - "101.ansible.conf"
   tags:
     - vhosts
     - deploy
