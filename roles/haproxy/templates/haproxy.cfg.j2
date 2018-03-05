@@ -92,6 +92,14 @@ frontend {{ fname }}
     #bind *:443 id 20 ssl crt /etc/haproxy/default.pem crt /etc/haproxy/certs.d crt /etc/haproxy/letsencrypt.certs.d ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK no-sslv3 no-tls-tickets npn http/1.1
 ## BINDS END ##
    
+{% if frontend.restricted_to_backend is defined %}
+{% for redirect in frontend.restricted_to_backend %}
+    acl {{ redirect.name }}_allowed src {% for ip in redirect.allowed %}{{ ip }} {% endfor %} 
+    acl {{ redirect.name }}_restricted_page hdr(host) -i {{ redirect.domain }}
+{% endfor %}
+{% endif %}
+
+
 {% if frontend.method_to_backend is defined %}
 {% for redirect in frontend.method_to_backend %}
     acl {{ redirect['name'] }}_domain hdr_end(host) -i {{ redirect['domain'] }}
@@ -128,6 +136,12 @@ frontend {{ fname }}
 
 {% if frontend.letsencrypt_backend is defined %}
     use_backend b_letsencrypt if is_le
+{% endif %}
+
+{% if frontend.restricted_to_backend is defined %}
+{% for redirect in frontend.restricted_to_backend %}
+    http-request deny if {{ redirect['name'] }}_restricted_page !{{ redirect['name'] }}_allowed
+{% endfor %}
 {% endif %}
 
 {% if frontend.method_to_backend is defined %}

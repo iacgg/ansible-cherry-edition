@@ -45,12 +45,21 @@ haproxy_frontends:
           web02: 10.100.51.11:80 check
         domains:
           - www.101.ansible.dk
+          - intranet.101.dk
           - 101.ansible.dk
           - www.y.101.dk
           - y.101.dk
         option: "httpchk GET /"
         mode: "http"
         balance: "leastconn"
+    restricted_to_backend:
+      - name: intranet
+        domain: intranet.101.dk
+        allowed:
+          - 192.168.10.0/24
+          - 192.168.11.0/24
+          - 172.31.13.0/24
+        #backend: web_cluster_lb
   mysql-intern:
     bind:
       - "*:3306 id 10"
