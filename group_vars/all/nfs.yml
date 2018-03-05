@@ -16,3 +16,4 @@ nfs_folder_list:
   - "YOURLS"
   - "nextcloud"
   - "wp101"
+  - "intranet"

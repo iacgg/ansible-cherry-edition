@@ -45,6 +45,7 @@ haproxy_frontends:
           web02: 10.100.51.11:80 check
         domains:
           - www.101.ansible.dk
+          - intranet.101.loc
           - intranet.101.dk
           - 101.ansible.dk
           - www.y.101.dk
@@ -54,7 +55,7 @@ haproxy_frontends:
         balance: "leastconn"
     restricted_to_backend:
       - name: intranet
-        domain: intranet.101.dk
+        domain: intranet.101.dk intranet.101.loc
         allowed:
           - 192.168.10.0/24
           - 192.168.11.0/24

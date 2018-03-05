@@ -11,6 +11,7 @@
     - "y.101.dk.conf"
     - "nextcloud.conf"
     - "101.ansible.conf"
+    - "intranet.101.conf"
   tags:
     - vhosts
     - deploy
