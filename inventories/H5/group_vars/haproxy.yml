@@ -17,7 +17,8 @@ vrrp_scripts:
 haproxy_stats_ip: 127.0.0.1
 
 haproxy_backends:
-  - web_cluster
+  - web_cluster_failover
+  - web_cluster_lb
   - mysql_cluster
 
 haproxy_frontends:
@@ -25,16 +26,28 @@ haproxy_frontends:
     bind:
       - "*:80 id 10"
       #- "*:443 id 20 ssl crt /etc/haproxy/default.pem crt /etc/haproxy/certs.d crt /etc/haproxy/letsencrypt.certs.d ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK no-sslv3 no-tls-tickets npn http/1.1"
-    default_backend: web_cluster
+    default_backend: web_cluster_failover
     log_format: haproxy_lua
     backends:
-      web_cluster:
+      web_cluster_failover:
         host:
           web01: 10.100.51.10:80 check
           web02: 10.100.51.11:80 check backup
         domains:
           - www.101.dk
           - 101.dk
+        option: "httpchk GET /"
+        mode: "http"
+        #balance: "leastconn"
+      web_cluster_lb:
+        host:
+          web01: 10.100.51.10:80 check
+          web02: 10.100.51.11:80 check
+        domains:
+          - www.101.ansible.dk
+          - 101.ansible.dk
+          - www.y.101.dk
+          - y.101.dk
         option: "httpchk GET /"
         mode: "http"
         balance: "leastconn"
