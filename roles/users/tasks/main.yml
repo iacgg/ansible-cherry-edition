@@ -7,7 +7,7 @@
   tags:
     - users
 
-- name: Ensures groups are created
+- name: Ensures groups is created
   group:
     name: "{{ item }}"
     state: present
@@ -29,7 +29,7 @@
     - groups
     - users
   
-- name: Ensure users created
+- name: Ensure users is created
   user:
     name: "{{ item.key }}"
     createhome: yes
@@ -46,7 +46,7 @@
   tags:
     - users
 
-- name: User .ssh dir
+- name: Ensures users .ssh dir exists
   file:
     path: "/home/{{ item.key }}/.ssh"
     owner: "{{ item.key }}"
@@ -61,7 +61,7 @@
     - users
     - users-keys
 
-- name: User authorized_keys
+- name: Ensures users authorized_keys is in place
   template:
     src: "authorized_keys"
     dest: "/home/{{ item.key }}/.ssh/authorized_keys"
@@ -78,7 +78,7 @@
     
 ## Stage only start##
 
-- name: Ensure user groups exists [stage only]
+- name: Ensures user groups exists [stage only]
   group:
     name: "{{ item.key }}"
     state: present
@@ -139,7 +139,7 @@
 
 ## Stage only end ##
 
-- name: Ensures sudoers is present
+- name: Ensures sudo package is present
   apt:
     pkg: "sudo"
     state: present
@@ -148,7 +148,7 @@
     - sudoers
     - sudoers-config
 
-- name: Ensured sudoers template is deployed
+- name: Ensures sudoers template is deployed
   template:
     src: "sudoers.j2"
     dest: "{{ sudoers_location | default('/etc/sudoers') }}"
@@ -161,7 +161,7 @@
     - sudoers
     - sudoers-config
 
-- name: Ensure keys added to ubuntu user
+- name: Ensures keys added to ubuntu user
   authorized_key:
     user: "ubuntu"
     key: "{{ item.value.pubkey | default([]) | join('\n') }}" 
@@ -173,7 +173,7 @@
   tags:
     - users
 
-- name: Ensure keys added to www-data user
+- name: Ensures keys added to www-data user
   authorized_key:
     user: "www-data"
     key: "{{ item.value.pubkey | default([]) | join('\n') }}" 

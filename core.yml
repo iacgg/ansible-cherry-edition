@@ -1,11 +1,20 @@
+# core.yml
 ---
+
+# Disse roller vil blive kørt på alle hosts som udgangspunk hvis when: betingelsen overholdes
+# Denne when: betingelse vil blive brugt flere steder i playbooks samt roller
 - hosts: all
   roles:
+# Bruges ikke længere, da DNS server sættes i templaten
     - role: resolv
       when: "resolv_managed|default(false)"
+# Udruller de brugere der skal have adgang til maskinen, udover bootstrap brugeren
+# Udover det, tillader den at brugere der er medlem af sudo, kan bruge sudo uden kodeord
     - role: users
       when: "users_managed|default(true)"
+# Sætter hostnavnet på maskinen, samt tilføjer det til /etc/hosts
     - role: hosts
       when: "hosts_managed|default(true)"
+# Udruller syslog-ng klienten til alle maskiner
     - role: syslog/syslog-client
       when: "syslog_managed|default(true)"

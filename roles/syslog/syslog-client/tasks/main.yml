@@ -7,7 +7,7 @@
     - syslog
     - syslog-client
 
-- name: Custom everything log
+- name: Ensures syslog-ng configurations is in present
   template:
     src: "{{ item }}"
     dest: "/etc/syslog-ng/conf.d/{{ item }}"

@@ -1,5 +1,5 @@
 ---
-- name: Ensures hostname is ansible_inventory"
+- name: Ensures hostname is set to ansible_inventory
   hostname:
     name: "{{ host_fqdn }}"
   tags:
