@@ -1,5 +1,8 @@
+# bootstrap.yml
 ---
 
+# Denne fortæller at rollen bootstrap skal udrulles på alle hosts, med uden at samle informationer
+# Da indsamling af informationer kræver python. Som endnu ikke er installeret. 
 - hosts: all
   gather_facts: False
   roles:

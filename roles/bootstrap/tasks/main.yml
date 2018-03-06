@@ -1,3 +1,8 @@
+# roles/bootstrap/tasks/main.yml
 ---
+
+# Denne rolle køre kommandoen som ses efter "raw:"
+# Dette er kommadonen de virtuelle maskiner vil kører
+
 - name: Bootstraping python
   raw: "apt-get install -y python python-apt"

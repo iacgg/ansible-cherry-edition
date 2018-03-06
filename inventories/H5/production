@@ -17,10 +17,5 @@ mysql01 ssh_ip=10.100.51.20
 mysql02 ssh_ip=10.100.51.21
 mysql03 ssh_ip=10.100.51.22
 
-#[syslog]
-#syslog01 ssh_ip=10.100.60.15
-#syslog02 ssh_ip=10.100.60.16
-
 [graylog]
 graylog01 ssh_ip=10.100.60.15
-#graylog02 ssh_ip=10.100.60.16
