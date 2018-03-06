@@ -1,9 +1,14 @@
+# Bruges til at tilføje alle grupperne til en fælles gruppe
+# Denne fælles gruppe kan bruge til at sætte variable til production enviromentet
 [production:children]
 haproxy
 web
 graylog
 mysql
 
+# En gruppe der indeholde de to haproxy noder. 
+# Der er lavet gruppe for alle typer noder herunder
+# ssh_ip er den ip adresse der bruge til at SSH til noden
 [haproxy]
 haproxy01 ssh_ip=10.100.51.15
 haproxy02 ssh_ip=10.100.51.16
