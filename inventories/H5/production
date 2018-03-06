@@ -1,3 +1,4 @@
+# inventories/H5/producktion.yml
 # Bruges til at tilføje alle grupperne til en fælles gruppe
 # Denne fælles gruppe kan bruge til at sætte variable til production enviromentet
 [production:children]
