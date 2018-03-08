@@ -1,15 +1,14 @@
 ---
 php_pools:
-  yourls:
-    pm: "dynamic"
+  wp101ansible:
     max_children: "10"
     process_idle_timeout: "10s"
     max_requests: "200"
-  nextcloud:
+  wp101dk:
     max_children: "10"
     process_idle_timeout: "10s"
     max_requests: "200"
-  wp101:
+  wp101intra:
     max_children: "10"
     process_idle_timeout: "10s"
     max_requests: "200"

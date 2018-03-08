@@ -5,16 +5,16 @@ deploy_mysql_user:
     password: "clustercheckpassword!"
     grant: "*.*:process"
     host: "localhost"
-  wp101:
+  wp101ansible:
+    password: "wp101ansible!"
+    grant: "wp101ansible.*:all"
+    host: "10.100.51.%"
+  wp101dk:
     password: "wp101dk!"
-    grant: "wp101.*:all"
+    grant: "wp101dk.*:all"
     host: "10.100.51.%"
-  yourls:
-    password: "you123"
-    grant: "yourls.*:all"
-    host: "10.100.51.%"
-  nextcloud:
-    password: "cloud321"
-    grant: "nextcloud.*:all"
+  wp101intra:
+    password: "wp101intra!"
+    grant: "wp101intra.*:all"
     host: "10.100.51.%"
 

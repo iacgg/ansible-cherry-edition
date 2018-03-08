@@ -13,7 +13,6 @@ nfs_mounts:
     share_name: "/nfs_share"
 
 nfs_folder_list:
-  - "YOURLS"
-  - "nextcloud"
-  - "wp101"
-  - "intranet"
+  - "wp101ansible"
+  - "wp101dk"
+  - "wp101intra"

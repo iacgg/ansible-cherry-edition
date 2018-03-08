@@ -8,10 +8,9 @@
     mode: 0664
   register: vhosts
   with_items:
-    - "y.101.dk.conf"
-    - "nextcloud.conf"
-    - "101.ansible.conf"
-    - "intranet.101.conf"
+    - "wp101ansible.conf"
+    - "wp101dk.conf"
+    - "wp101intra.conf"
   tags:
     - vhosts
     - deploy
