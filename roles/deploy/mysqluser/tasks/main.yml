@@ -1,10 +1,10 @@
 ---
 
-- name: Ensures mysql users exists for replication
+- name: Ensures mysql users exists
   mysql_user:
     name: "{{ item.key }}"
     password: "{{ item.value.password }}"
-    priv: "{{ item.value.grant}}" #*.*:RELOAD,LOCK TABLES,PROCESS,REPLICATION CLIENT
+    priv: "{{ item.value.grant}}"
     host: "{{ item.value.host }}"
     state: present
   with_dict: "{{ deploy_mysql_user }}"
