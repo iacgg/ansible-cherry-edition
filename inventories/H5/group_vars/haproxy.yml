@@ -48,8 +48,6 @@ haproxy_frontends:
           - intranet.101.loc
           - intranet.101.dk
           - 101.ansible.dk
-          - www.y.101.dk
-          - y.101.dk
         option: "httpchk GET /"
         mode: "http"
         balance: "leastconn"
